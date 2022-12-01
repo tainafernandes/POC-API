@@ -1,0 +1,10 @@
+spring:
+  jpa:
+    open-in-view: false
+    database: MYSQL
+    hibernate:
+      ddl-auto: update
+  datasource:
+    username: ${USERNAME}
+    url: ${URL}
+    password: ${PASSWORD}
