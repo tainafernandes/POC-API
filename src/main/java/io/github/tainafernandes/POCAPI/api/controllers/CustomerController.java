@@ -6,6 +6,7 @@ import io.github.tainafernandes.POCAPI.api.enums.documentType;
 import io.github.tainafernandes.POCAPI.api.services.CustomerService;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -20,21 +21,15 @@ public class CustomerController {
 
     private final CustomerService service;
 
+    private final ModelMapper mapper;
+
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public CustomerDTO create(@RequestBody CustomerDTO dto){
-        Customer customerEntity = Customer.builder().name(dto.getName()).email(dto.getEmail())
-                .document(dto.getDocument()).documentType(dto.getDocumentType())
-                .phoneNumber(dto.getPhoneNumber()).build();
+        Customer customerEntity = mapper.map(dto, Customer.class);
 
         customerEntity = service.save(customerEntity);
 
-        return CustomerDTO.builder()
-                .id(customerEntity.getId())
-                .name(customerEntity.getName())
-                .email(customerEntity.getEmail()).document(customerEntity.getDocument())
-                .documentType(customerEntity.getDocumentType())
-                .phoneNumber(customerEntity.getPhoneNumber())
-                .build();
+        return mapper.map(customerEntity, CustomerDTO.class);
     }
 }
