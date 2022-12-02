@@ -1,13 +1,16 @@
 package io.github.tainafernandes.POCAPI.api.controllers;
 
+import static org.hamcrest.Matchers.hasSize;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.github.tainafernandes.POCAPI.api.DTO.CustomerDTO;
 import io.github.tainafernandes.POCAPI.api.entities.Customer;
 import io.github.tainafernandes.POCAPI.api.enums.documentType;
 import io.github.tainafernandes.POCAPI.api.services.CustomerService;
+import org.hamcrest.Matchers;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -22,6 +25,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
@@ -49,7 +53,6 @@ public class CustomerControllerTest {
                 .build();
 
         BDDMockito.given(service.save(Mockito.any(Customer.class))).willReturn(savedCustomer);
-
         String json = new ObjectMapper().writeValueAsString(dto); //Method receives obj and transforms it into JSON
 
         //To create a req - Definition of the request
@@ -73,7 +76,18 @@ public class CustomerControllerTest {
 
     @Test
     @DisplayName("It should throw an error when there is not all the data to create a customer")
-    public void createInvalidCustomerTest(){
+    public void createInvalidCustomerTest() throws Exception {
 
+        String json = new ObjectMapper().writeValueAsString(new CustomerDTO());
+
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders
+                .post(CUSTOMER_API)
+                .contentType(MediaType.APPLICATION_JSON) //request Json
+                .accept(MediaType.APPLICATION_JSON) //response JSON
+                .content(json); //JSON Object
+
+        mvc.perform(request)
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("errors", hasSize(5)));//I will launch 5 errors for the 5 required fields
     }
 }
