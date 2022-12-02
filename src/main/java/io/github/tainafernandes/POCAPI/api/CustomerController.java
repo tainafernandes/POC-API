@@ -1,4 +1,4 @@
-package io.github.tainafernandes.POCAPI.api.controllers;
+package io.github.tainafernandes.POCAPI.api;
 
 import io.github.tainafernandes.POCAPI.api.DTO.CustomerDTO;
 import io.github.tainafernandes.POCAPI.api.entities.Customer;

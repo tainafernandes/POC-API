@@ -28,14 +28,14 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 @WebMvcTest
 @ExtendWith(SpringExtension.class)
-@ActiveProfiles("test")
+@ActiveProfiles("test") //Annotations used to configure tests in RestApis
 @AutoConfigureMockMvc
 public class CustomerControllerTest {
 
     static String CUSTOMER_API = "/customers";
     @Autowired
     MockMvc mvc;
-    @MockBean //especializado para criar instancia mockada
+    @MockBean //specialized to create mocked instance
     CustomerService service;
     @Test
     @DisplayName("Must successfully create a customer")
@@ -67,7 +67,7 @@ public class CustomerControllerTest {
                 .andExpect(jsonPath("name").value(dto.getName())) //return teste
                 .andExpect(jsonPath("email").value(dto.getEmail()))
                 .andExpect(jsonPath("document").value(dto.getDocument()))
-                .andExpect(jsonPath("documentType").value(dto.getDocumentType()))
+                .andExpect(jsonPath("documentType").value(dto.getDocumentType().toString()))
                 .andExpect(jsonPath("phoneNumber").value(dto.getPhoneNumber()));
     }
 
