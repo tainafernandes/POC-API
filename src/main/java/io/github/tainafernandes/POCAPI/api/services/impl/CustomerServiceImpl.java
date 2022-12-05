@@ -3,6 +3,7 @@ package io.github.tainafernandes.POCAPI.api.services.impl;
 import io.github.tainafernandes.POCAPI.api.entities.Customer;
 import io.github.tainafernandes.POCAPI.api.exception.BusinessException;
 import io.github.tainafernandes.POCAPI.api.repository.CustomerRepository;
+import java.util.Optional;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 @Service
@@ -16,4 +17,5 @@ public class CustomerServiceImpl {
         }
         return repository.save(customer);
     }
+
 }

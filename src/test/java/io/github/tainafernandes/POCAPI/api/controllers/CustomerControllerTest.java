@@ -10,6 +10,7 @@ import io.github.tainafernandes.POCAPI.api.entities.Customer;
 import io.github.tainafernandes.POCAPI.api.enums.documentType;
 import io.github.tainafernandes.POCAPI.api.services.CustomerService;
 import io.github.tainafernandes.POCAPI.api.exception.BusinessException;
+import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -77,7 +78,7 @@ public class CustomerControllerTest {
 
     @Test
     @DisplayName("It should throw an error when there is not all the data to create a customer")
-    public void createInvalidCustomerTest() throws Exception { //validação de integridade
+    public void createInvalidCustomerTest() throws Exception { //integrity validation
 
         String json = new ObjectMapper().writeValueAsString(new CustomerDTO());
 
@@ -112,5 +113,47 @@ public class CustomerControllerTest {
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("errors", hasSize(1)))
                 .andExpect(jsonPath("errors[0]").value(msgError));
+    }
+    @Test
+    @DisplayName("Must get customer information")
+    public void getCustomerDetailsTest() throws Exception{
+        //scenery (given)
+        Long id = 1l;
+
+        Customer customer = Customer.builder().id(id)
+                .name(createNewCustomer().getName())
+                .email(createNewCustomer().getEmail())
+                .document(createNewCustomer().getDocument())
+                .documentType(createNewCustomer().getDocumentType())
+                .phoneNumber(createNewCustomer().getPhoneNumber())
+                .build();
+        BDDMockito.given(service.getById(id)).willReturn(Optional.of(customer));
+
+        //execution
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders
+                .get(CUSTOMER_API.concat("/"+id))
+                .accept(MediaType.APPLICATION_JSON);
+
+        mvc.perform(request)
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("id").value(id)) //return id.
+                .andExpect(jsonPath("name").value(createNewCustomer().getName())) //return teste
+                .andExpect(jsonPath("email").value(createNewCustomer().getEmail()))
+                .andExpect(jsonPath("document").value(createNewCustomer().getDocument()))
+                .andExpect(jsonPath("documentType").value(createNewCustomer().getDocumentType().toString()))
+                .andExpect(jsonPath("phoneNumber").value(createNewCustomer().getPhoneNumber()));
+    }
+    @Test
+    @DisplayName("Should return resource not found when the customer sought does not exist")
+    public void customerNotFoundTest() throws Exception{
+
+        BDDMockito.given(service.getById(Mockito.anyLong())).willReturn(Optional.empty()); //returns empty because it means that I didn't find a customer in the DB
+
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders
+                .get(CUSTOMER_API.concat("/"+1))
+                .accept(MediaType.APPLICATION_JSON);
+
+        mvc.perform(request)
+                .andExpect(status().isNotFound());
     }
 }
