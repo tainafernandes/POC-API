@@ -2,8 +2,10 @@ package io.github.tainafernandes.POCAPI.api.controller;
 
 import io.github.tainafernandes.POCAPI.api.DTO.CustomerDTO;
 import io.github.tainafernandes.POCAPI.api.entities.Customer;
-import io.github.tainafernandes.POCAPI.api.exception.ApiErrors;
+import io.github.tainafernandes.POCAPI.api.exception.BusinessException;
+import io.github.tainafernandes.POCAPI.api.exception.apiException.ApiErrors;
 import io.github.tainafernandes.POCAPI.api.services.CustomerService;
+import java.util.Arrays;
 import javax.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -39,5 +41,11 @@ public class CustomerController {
         BindingResult bindingResult = ex.getBindingResult();
         //BindigResult - validation result that occurred when validating the obj annotated with @Valid
         return new ApiErrors(bindingResult);
+    }
+
+    @ExceptionHandler(BusinessException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ApiErrors handleBusinessException(BusinessException ex){
+        return new ApiErrors(ex);
     }
 }

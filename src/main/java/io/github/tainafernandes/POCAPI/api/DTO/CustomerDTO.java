@@ -1,9 +1,8 @@
 package io.github.tainafernandes.POCAPI.api.DTO;
 
 import io.github.tainafernandes.POCAPI.api.enums.documentType;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
