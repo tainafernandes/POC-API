@@ -1,6 +1,7 @@
 package io.github.tainafernandes.POCAPI.api.services.impl;
 
 import io.github.tainafernandes.POCAPI.api.entities.Customer;
+import io.github.tainafernandes.POCAPI.api.exception.BusinessException;
 import io.github.tainafernandes.POCAPI.api.repository.CustomerRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -10,6 +11,9 @@ public class CustomerServiceImpl {
 
     private CustomerRepository repository;
     public Customer save(Customer customer){
+        if(repository.existsByDocument(customer.getDocument())){
+            throw new BusinessException("Document already registered");
+        }
         return repository.save(customer);
     }
 }
