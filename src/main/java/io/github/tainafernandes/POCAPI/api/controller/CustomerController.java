@@ -5,17 +5,18 @@ import io.github.tainafernandes.POCAPI.api.entities.Customer;
 import io.github.tainafernandes.POCAPI.api.exception.BusinessException;
 import io.github.tainafernandes.POCAPI.api.exception.apiException.ApiErrors;
 import io.github.tainafernandes.POCAPI.api.services.CustomerService;
-import java.util.Arrays;
-import javax.validation.Valid;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -34,9 +35,9 @@ public class CustomerController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public CustomerDTO create(@RequestBody @Valid CustomerDTO dto){
-        Customer customerEntity = mapper.map(dto, Customer.class);
-        customerEntity = service.save(customerEntity);
-        return mapper.map(customerEntity, CustomerDTO.class);
+        Customer entity = mapper.map(dto, Customer.class);
+        entity = service.save(entity);
+        return mapper.map(entity, CustomerDTO.class);
     }
     @GetMapping("{id}")
     public CustomerDTO get(@PathVariable Long id){
@@ -45,6 +46,26 @@ public class CustomerController {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
     }
 
+    @DeleteMapping("{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void delete(@PathVariable Long id){
+        Customer customer = service.getById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+        service.delete(customer);
+    }
+    @PutMapping("{id}")
+    public CustomerDTO update(@PathVariable Long id, @RequestBody @Valid CustomerDTO dto){
+        return  service.getById(id).map(customer -> {
+            customer.setName(dto.getName());
+            customer.setEmail(dto.getEmail());
+            customer.setDocument(dto.getDocument());
+            customer.setDocumentType(dto.getDocumentType());
+            customer.setPhoneNumber(dto.getPhoneNumber());
+
+            service.update(customer);
+            return mapper.map(customer, CustomerDTO.class);
+        }).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+
+    }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)

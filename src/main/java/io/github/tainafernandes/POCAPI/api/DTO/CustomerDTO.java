@@ -1,8 +1,11 @@
 package io.github.tainafernandes.POCAPI.api.DTO;
 
 import io.github.tainafernandes.POCAPI.api.enums.documentType;
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -15,14 +18,15 @@ import lombok.NoArgsConstructor;
 public class CustomerDTO {
 
     private Long id;
-    @NotEmpty
+    @NotBlank
     private String name;
-    @NotEmpty
+    @NotBlank
     private String email;
-    @NotEmpty
+    @NotBlank
     private String document;
-    @NotEmpty
+    @NotNull
+    @Enumerated(EnumType.STRING)
     private documentType documentType;
-    @NotEmpty
+    @NotBlank
     private String phoneNumber;
 }

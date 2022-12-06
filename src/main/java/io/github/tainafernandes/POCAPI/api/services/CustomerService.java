@@ -7,4 +7,8 @@ public interface CustomerService {
     Customer save(Customer any);
 
     Optional<Customer> getById(Long id);
+
+    void delete(Customer customer);
+
+    Customer update(Customer customer);
 }
