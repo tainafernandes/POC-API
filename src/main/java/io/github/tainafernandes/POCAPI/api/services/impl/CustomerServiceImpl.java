@@ -18,4 +18,7 @@ public class CustomerServiceImpl {
         return repository.save(customer);
     }
 
+    public Optional<Customer> getById(Long id){
+        return  this.repository.findById(id);
+    }
 }

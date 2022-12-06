@@ -5,6 +5,7 @@ import io.github.tainafernandes.POCAPI.api.enums.documentType;
 import io.github.tainafernandes.POCAPI.api.exception.BusinessException;
 import io.github.tainafernandes.POCAPI.api.repository.CustomerRepository;
 import io.github.tainafernandes.POCAPI.api.services.impl.CustomerServiceImpl;
+import java.util.Optional;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -82,5 +83,41 @@ public class CustomerServiceTest { //Only unit tests
 
         //if there is an error, I cannot call the save. Then let's test that it is not saving
         Mockito.verify(repository, Mockito.never()).save(customer); //It will never execute this method with this parameter
+    }
+
+    @Test
+    @DisplayName("Must get a customer by Id")
+    public void getByIdTest(){
+        Long id = 1l;
+
+        Customer customer = createCustomer();
+        customer.setId(id);
+        Mockito.when(repository.findById(id)).thenReturn(Optional.of(customer));
+
+        //execution
+        Optional<Customer> foundCustomer = service.getById(id);
+
+        //verifications
+        assertThat(foundCustomer.isPresent()).isTrue();
+        assertThat(foundCustomer.get().getId()).isEqualTo(id);
+        assertThat(foundCustomer.get().getName()).isEqualTo(customer.getName());
+        assertThat(foundCustomer.get().getEmail()).isEqualTo(customer.getEmail());
+        assertThat(foundCustomer.get().getDocument()).isEqualTo(customer.getDocument());
+        assertThat(foundCustomer.get().getDocumentType()).isEqualTo(customer.getDocumentType());
+        assertThat(foundCustomer.get().getPhoneNumber()).isEqualTo(customer.getPhoneNumber());
+    }
+
+    @Test
+    @DisplayName("Must return empty when obtaining a customer by Id when it does not exist in the database")
+    public void customerNotFoundByIdTest(){
+        Long id = 1l;
+
+        Mockito.when(repository.findById(id)).thenReturn(Optional.empty());
+
+        //execution
+        Optional<Customer> customer = service.getById(id);
+
+        //verifications
+        assertThat(customer.isPresent()).isFalse();
     }
 }
