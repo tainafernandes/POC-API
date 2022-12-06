@@ -2,6 +2,7 @@ package io.github.tainafernandes.POCAPI.api.repository;
 
 import io.github.tainafernandes.POCAPI.api.entities.Customer;
 import io.github.tainafernandes.POCAPI.api.enums.documentType;
+import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -23,14 +24,18 @@ public class CustomerRepositoryTest { //Integration Test
     @Autowired
     CustomerRepository repository;
 
+    private Customer createNewCustomer(){
+        return Customer.builder().name("Josefa").email("josefa@email.com")
+                .document("12345678900").documentType(documentType.PF).phoneNumber("11999999999")
+                .build();
+    }
+
     @Test
     @DisplayName("It must return true when there is a Customer in the base with the informed Document")
     public void returnTrueWhenDocumentExists(){
         //scenery
         String document = "12345678900";
-        Customer customer = Customer.builder().name("Josefa").email("josefa@email.com")
-                .document(document).documentType(documentType.PF).phoneNumber("11999999999")
-                .build();
+        Customer customer = createNewCustomer();
         entityManager.persist(customer); //vai persistir uma entidade
 
         //execution
@@ -53,4 +58,17 @@ public class CustomerRepositoryTest { //Integration Test
         assertThat(exists).isFalse();
     }
 
+    @Test
+    @DisplayName("Must get a Customer by Id")
+    public void findByIdTest(){
+        //scenery
+        Customer customer = createNewCustomer();
+        entityManager.persist(customer);
+
+        //execution
+        Optional<Customer> foundCustomer = repository.findById(customer.getId());
+
+        //verification
+        assertThat(foundCustomer.isPresent()).isTrue();
+    }
 }
