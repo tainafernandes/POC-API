@@ -11,6 +11,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ActiveProfiles;
@@ -119,5 +120,75 @@ public class CustomerServiceTest { //Only unit tests
 
         //verifications
         assertThat(customer.isPresent()).isFalse();
+    }
+    @Test
+    @DisplayName("You must delete a customer when the specified id exists in the database")
+    public void deleteCustomerTest(){
+        Long id = 1l;
+
+        Customer customer = createCustomer();
+        customer.setId(id);
+
+        // execution
+        org.junit.jupiter.api.Assertions.assertDoesNotThrow(() -> service.delete(customer));
+
+        //verifications
+        Mockito.verify(repository, Mockito.times(1)).delete(customer);
+
+        //DESSA MANEIRA O TESTE TBM PASSA.
+//        Customer customer = createCustomer();
+//        customer.setId(id);
+//        Mockito.when(repository.findById(id)).thenReturn(Optional.of(customer));
+//
+//        Optional<Customer> foundCustomer = service.getById(id);
+//
+//        assertThat(foundCustomer.isPresent()).isTrue();
+//        service.delete(customer);
+    }
+
+    @Test
+    @DisplayName("Should return error when trying to delete a Customer that does not exist")
+    public void deleteInvalidCustomerTest(){
+        Customer customer = new Customer();
+
+        org.junit.jupiter.api.Assertions.assertThrows(IllegalArgumentException.class, () -> service.delete(customer));
+
+        Mockito.verify(repository, Mockito.never()).delete(customer); //Never call method delete
+    }
+
+    @Test
+    @DisplayName("Should return error when trying to update a Customer that does not exist")
+    public void updateInvalidCustomerTest(){
+        Customer customer = new Customer();
+
+        org.junit.jupiter.api.Assertions.assertThrows(IllegalArgumentException.class, () -> service.update(customer));
+
+        Mockito.verify(repository, Mockito.never()).save(customer); //Never call method delete
+    }
+
+    @Test
+    @DisplayName("You must update the customer with the given id")
+    public void updateCustomerTest(){
+        //scenary
+        Long id = 1l;
+
+        //customer update
+        Customer updatingCustomer = Customer.builder().id(id).build();
+
+        //simulation
+        Customer updatedCustomer = createCustomer();
+        updatedCustomer.setId(id);
+        Mockito.when(repository.save(updatingCustomer)).thenReturn(updatedCustomer);
+
+        //execution
+        Customer customer = service.update(updatingCustomer);
+
+        //verification
+        assertThat(customer.getId()).isEqualTo(updatedCustomer.getId());
+        assertThat(customer.getName()).isEqualTo(updatedCustomer.getName());
+        assertThat(customer.getEmail()).isEqualTo(updatedCustomer.getEmail());
+        assertThat(customer.getDocument()).isEqualTo(updatedCustomer.getDocument());
+        assertThat(customer.getDocumentType()).isEqualTo(updatedCustomer.getDocumentType());
+        assertThat(customer.getPhoneNumber()).isEqualTo(updatedCustomer.getPhoneNumber());
     }
 }

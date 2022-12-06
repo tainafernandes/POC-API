@@ -21,4 +21,18 @@ public class CustomerServiceImpl {
     public Optional<Customer> getById(Long id){
         return  this.repository.findById(id);
     }
+
+    public void delete(Customer customer){
+        if(customer == null || customer.getId() == null){
+            throw new IllegalArgumentException("Customer id cant be null");
+        }
+        this.repository.delete(customer);
+    }
+
+    public Customer update (Customer customer){
+        if(customer == null || customer.getId() == null){
+            throw new IllegalArgumentException("Customer id cant be null");
+        }
+        return this.repository.save(customer);
+    }
 }
