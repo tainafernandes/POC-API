@@ -71,4 +71,30 @@ public class CustomerRepositoryTest { //Integration Test
         //verification
         assertThat(foundCustomer.isPresent()).isTrue();
     }
+
+    @Test
+    @DisplayName("Must save a Customer")
+    public void saveCustomerTest(){
+        Customer customer = createNewCustomer();
+
+        Customer savedCustomer = repository.save(customer);
+
+        assertThat(savedCustomer.getId()).isNotNull();
+    }
+
+    @Test
+    @DisplayName("Must delete a Customer")
+    public void deleteCustomerTest(){
+        Customer customer = createNewCustomer();
+        entityManager.persist(customer);
+
+        Customer foundCustomer = entityManager.find(Customer.class, customer.getId());
+
+        repository.delete(foundCustomer);
+
+        Customer deletedCustomer = entityManager.find(Customer.class, customer.getId());
+
+        assertThat(deletedCustomer).isNull(); //devolve nulo pq o livro não existe
+
+    }
 }
