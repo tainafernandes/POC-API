@@ -4,11 +4,12 @@ import io.github.tainafernandes.POCAPI.api.DTO.CustomerDTO;
 import io.github.tainafernandes.POCAPI.api.entities.Customer;
 import io.github.tainafernandes.POCAPI.api.exception.BusinessException;
 import io.github.tainafernandes.POCAPI.api.exception.apiException.ApiErrors;
-import io.github.tainafernandes.POCAPI.api.services.CustomerService;
+import io.github.tainafernandes.POCAPI.api.services.impl.CustomerServiceImpl;
 import jakarta.validation.Valid;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -30,12 +31,13 @@ import org.springframework.web.server.ResponseStatusException;
 
 @RestController
 @RequestMapping("/customers")
+@NoArgsConstructor
 @AllArgsConstructor
 public class CustomerController {
 
-    private final CustomerService service;
+    private CustomerServiceImpl service;
 
-    private final ModelMapper mapper;
+    private ModelMapper mapper;
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
