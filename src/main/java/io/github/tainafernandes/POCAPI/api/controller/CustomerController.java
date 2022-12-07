@@ -6,8 +6,13 @@ import io.github.tainafernandes.POCAPI.api.exception.BusinessException;
 import io.github.tainafernandes.POCAPI.api.exception.apiException.ApiErrors;
 import io.github.tainafernandes.POCAPI.api.services.CustomerService;
 import jakarta.validation.Valid;
+import java.util.List;
+import java.util.stream.Collectors;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -66,6 +71,17 @@ public class CustomerController {
         }).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
 
     }
+
+    @GetMapping
+    public Page<CustomerDTO> find(CustomerDTO dto, Pageable pageRequest){
+        Customer filter = mapper.map(dto, Customer.class);
+        Page<Customer> result = service.find(filter, pageRequest); //Here it returns a Customer page, but I have to return a CustomerDto page
+        List<CustomerDTO> list = result.getContent().stream()
+                .map(entity -> mapper.map(entity, CustomerDTO.class))
+                .collect(Collectors.toList());
+        return new PageImpl<CustomerDTO>(list, pageRequest, result.getTotalElements());
+    }
+
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)

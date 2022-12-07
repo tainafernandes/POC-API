@@ -11,6 +11,7 @@ import io.github.tainafernandes.POCAPI.api.entities.Customer;
 import io.github.tainafernandes.POCAPI.api.enums.documentType;
 import io.github.tainafernandes.POCAPI.api.services.CustomerService;
 import io.github.tainafernandes.POCAPI.api.exception.BusinessException;
+import java.util.Arrays;
 import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -21,6 +22,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
@@ -233,5 +237,40 @@ public class CustomerControllerTest {
 
         mvc.perform(request)
                 .andExpect(status().isNotFound());
+    }
+
+    @Test
+    @DisplayName("Must filter customers")
+    public void findCustomersTest() throws Exception{
+        Long id = 1l;
+
+        Customer customer = Customer.builder().id(id)
+                .name(createNewCustomer().getName())
+                .email(createNewCustomer().getEmail())
+                .document(createNewCustomer().getDocument())
+                .documentType(createNewCustomer().getDocumentType())
+                .phoneNumber(createNewCustomer().getPhoneNumber())
+                .build();
+
+        BDDMockito.given(service.find(Mockito.any(Customer.class), Mockito.any(Pageable.class)))
+                .willReturn(new PageImpl<Customer>(Arrays.asList(customer), PageRequest.of(0, 100), 1));
+        //Pageable is used to say the page number and how many records it should bring
+;
+        String queryString = String.format("?name=%s&email=%s&page=0&size=100",
+                customer.getName(),
+                customer.getEmail());
+//              customer.getDocument(), customer.getDocumentType(),customer.getPhoneNumber()) - sem parametrização (por enquanto)
+        MockHttpServletRequestBuilder request =  MockMvcRequestBuilders
+                .get(CUSTOMER_API.concat(queryString))
+                .accept(MediaType.APPLICATION_JSON);
+
+        mvc
+                .perform(request)
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("content", hasSize(1)))
+                .andExpect(jsonPath("totalElements").value(1))
+                .andExpect(jsonPath("pageable.pageSize").value(100))
+                .andExpect(jsonPath("pageable.pageNumber").value(0));
+                //content - registers
     }
 }
