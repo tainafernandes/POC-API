@@ -7,18 +7,18 @@ import io.github.tainafernandes.POCAPI.api.services.CustomerService;
 import java.util.Optional;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+
 @Service
-@NoArgsConstructor
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class CustomerServiceImpl implements CustomerService {
-
-    private CustomerRepository repository;
-
+    private final CustomerRepository repository;
 
     @Override
     public Customer save(Customer customer){
@@ -30,7 +30,7 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Override
     public Optional<Customer> getById(Long id){
-        return  this.repository.findById(id);
+        return this.repository.findById(id);
     }
     @Override
     public void delete(Customer customer){

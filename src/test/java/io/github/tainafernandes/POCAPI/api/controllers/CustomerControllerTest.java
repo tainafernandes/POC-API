@@ -11,6 +11,7 @@ import io.github.tainafernandes.POCAPI.api.entities.Customer;
 import io.github.tainafernandes.POCAPI.api.enums.documentType;
 import io.github.tainafernandes.POCAPI.api.services.CustomerService;
 import io.github.tainafernandes.POCAPI.api.exception.BusinessException;
+import io.github.tainafernandes.POCAPI.api.services.impl.CustomerServiceImpl;
 import java.util.Arrays;
 import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
@@ -43,7 +44,7 @@ public class CustomerControllerTest {
     @Autowired
     MockMvc mvc;
     @MockBean //specialized to create mocked instance
-    CustomerService service;
+    CustomerServiceImpl service;
 
     private CustomerDTO createNewCustomer(){
         return CustomerDTO.builder().name("Josefa").email("josefa@email.com")
