@@ -1,9 +1,9 @@
-package io.github.tainafernandes.POCAPI.api.services.impl;
+package io.github.tainafernandes.POCAPI.api.service.impl;
 
 import io.github.tainafernandes.POCAPI.api.entities.Address;
 import io.github.tainafernandes.POCAPI.api.exception.BusinessException;
 import io.github.tainafernandes.POCAPI.api.repository.AddressRepository;
-import io.github.tainafernandes.POCAPI.api.services.AddressService;
+import io.github.tainafernandes.POCAPI.api.service.AddressService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

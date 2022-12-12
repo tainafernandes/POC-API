@@ -1,9 +1,9 @@
-package io.github.tainafernandes.POCAPI.api.services.impl;
+package io.github.tainafernandes.POCAPI.api.service.impl;
 
 import io.github.tainafernandes.POCAPI.api.entities.Customer;
 import io.github.tainafernandes.POCAPI.api.exception.BusinessException;
 import io.github.tainafernandes.POCAPI.api.repository.CustomerRepository;
-import io.github.tainafernandes.POCAPI.api.services.CustomerService;
+import io.github.tainafernandes.POCAPI.api.service.CustomerService;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Example;
@@ -53,4 +53,9 @@ public class CustomerServiceImpl implements CustomerService {
                         .withStringMatcher(ExampleMatcher.StringMatcher.CONTAINING)); //Containing - the value I pass, just have a piece of the word that it brings to me
         return repository.findAll(example, pageRequest);
     }
+
+//    @Override
+//    public Optional<Customer> getCustomerById(long id) {
+//        return null;
+//    }
 }

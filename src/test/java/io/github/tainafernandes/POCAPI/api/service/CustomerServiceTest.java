@@ -4,7 +4,7 @@ import io.github.tainafernandes.POCAPI.api.entities.Customer;
 import io.github.tainafernandes.POCAPI.api.enums.documentType;
 import io.github.tainafernandes.POCAPI.api.exception.BusinessException;
 import io.github.tainafernandes.POCAPI.api.repository.CustomerRepository;
-import io.github.tainafernandes.POCAPI.api.services.impl.CustomerServiceImpl;
+import io.github.tainafernandes.POCAPI.api.service.impl.CustomerServiceImpl;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;

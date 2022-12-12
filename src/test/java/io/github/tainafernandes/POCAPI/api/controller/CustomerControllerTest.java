@@ -1,4 +1,4 @@
-package io.github.tainafernandes.POCAPI.api.controllers;
+package io.github.tainafernandes.POCAPI.api.controller;
 
 import static org.hamcrest.Matchers.hasSize;
 import static org.mockito.ArgumentMatchers.anyLong;
@@ -9,9 +9,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import io.github.tainafernandes.POCAPI.api.DTO.CustomerDTO;
 import io.github.tainafernandes.POCAPI.api.entities.Customer;
 import io.github.tainafernandes.POCAPI.api.enums.documentType;
-import io.github.tainafernandes.POCAPI.api.services.CustomerService;
 import io.github.tainafernandes.POCAPI.api.exception.BusinessException;
-import io.github.tainafernandes.POCAPI.api.services.impl.CustomerServiceImpl;
+import io.github.tainafernandes.POCAPI.api.service.impl.CustomerServiceImpl;
 import java.util.Arrays;
 import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
@@ -34,13 +33,13 @@ import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilde
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 
-@WebMvcTest
+@WebMvcTest(controllers = CustomerController.class)
 @ExtendWith(SpringExtension.class)
 @ActiveProfiles("test") //Annotations used to configure tests in RestApis
 @AutoConfigureMockMvc
 public class CustomerControllerTest {
 
-    static String CUSTOMER_API = "/customers";
+    static String CUSTOMER_API = "/api/customers";
     @Autowired
     MockMvc mvc;
     @MockBean //specialized to create mocked instance

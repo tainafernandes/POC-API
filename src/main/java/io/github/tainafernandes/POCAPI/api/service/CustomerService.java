@@ -1,4 +1,4 @@
-package io.github.tainafernandes.POCAPI.api.services;
+package io.github.tainafernandes.POCAPI.api.service;
 
 import io.github.tainafernandes.POCAPI.api.entities.Customer;
 import java.util.Optional;
@@ -15,4 +15,5 @@ public interface CustomerService {
     Customer update(Customer customer);
 
     Page<Customer> find(Customer filter, Pageable pageRequest);
+
 }

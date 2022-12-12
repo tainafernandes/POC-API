@@ -1,7 +1,7 @@
-package io.github.tainafernandes.POCAPI.api.services;
+package io.github.tainafernandes.POCAPI.api.service;
 
 import io.github.tainafernandes.POCAPI.api.entities.Address;
 
 public interface AddressService {
-    Address save(Address any);
+    Address save(Address address);
 }

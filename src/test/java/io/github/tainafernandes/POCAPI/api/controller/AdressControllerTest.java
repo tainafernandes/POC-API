@@ -1,13 +1,16 @@
-package io.github.tainafernandes.POCAPI.api.controllers;
+package io.github.tainafernandes.POCAPI.api.controller;
 
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.hamcrest.Matchers.hasSize;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.github.tainafernandes.POCAPI.api.DTO.AddressDTO;
 import io.github.tainafernandes.POCAPI.api.entities.Address;
 import io.github.tainafernandes.POCAPI.api.enums.StateAbbreviations;
-import io.github.tainafernandes.POCAPI.api.services.impl.AddressServiceImpl;
+import io.github.tainafernandes.POCAPI.api.repository.CustomerRepository;;
+import io.github.tainafernandes.POCAPI.api.service.impl.AddressServiceImpl;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -24,25 +27,29 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
-@WebMvcTest
+@WebMvcTest(controllers = AddressController.class)
 @ExtendWith(SpringExtension.class)
 @ActiveProfiles("test")
 @AutoConfigureMockMvc
 public class AdressControllerTest {
 
-    static String ADDRESS_API = "/address";
+    static String ADDRESS_API = "/api/address";
     @Autowired
-    MockMvc mvc;
+    MockMvc mvc; //utilizado para as requisições
     @MockBean
     AddressServiceImpl service;
+
+    @Autowired(required = false)
+    private CustomerRepository customerRepository;
 
     private AddressDTO createNewAddress(){
         return AddressDTO.builder().zipCode("18741-011")
                 .state(StateAbbreviations.SP).city("Santo André")
                 .neighborhood("Vila Luzita").street("Estrada do Pedroso")
-                .addressNumber("52").complement("Casa 1")
-                .build();
+                .addressNumber("52").complement("Casa 1").mainAddress(true)
+                .mainAddress(true).build();
     }
+    //preciso informar o Id do customer que quero cadastrar o endereço
 
     @Test
     @DisplayName("Must successfully create a address")
@@ -52,10 +59,11 @@ public class AdressControllerTest {
         Address saveAddress = Address.builder().id(1L).zipCode("18741-011")
                 .state(StateAbbreviations.SP).city("Santo André")
                 .neighborhood("Vila Luzita").street("Estrada do Pedroso")
-                .addressNumber("52").complement("Casa 1")
+                .addressNumber("52").complement("Casa 1").mainAddress(true)
                 .build();
 
         BDDMockito.given(service.save(Mockito.any(Address.class))).willReturn(saveAddress);
+
         String json = new ObjectMapper().writeValueAsString(dto);
 
         MockHttpServletRequestBuilder request = MockMvcRequestBuilders
@@ -73,6 +81,24 @@ public class AdressControllerTest {
                 .andExpect(jsonPath("neighborhood").value(dto.getNeighborhood()))
                 .andExpect(jsonPath("street").value(dto.getStreet()))
                 .andExpect(jsonPath("addressNumber").value(dto.getAddressNumber()))
-                .andExpect(jsonPath("complement").value(dto.getComplement()));
+                .andExpect(jsonPath("complement").value(dto.getComplement()))
+                .andExpect(jsonPath("mainAddress").value(dto.getMainAddress()));
+    }
+
+    @Test
+    @DisplayName("Should throw an error when there is not all the data to create an address")
+    public void createInvalidAddressTest() throws Exception{
+
+        String json = new ObjectMapper().writeValueAsString(new AddressDTO());
+
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders
+                .post(ADDRESS_API)
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
+                .content(json);
+
+        mvc.perform(request)
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("errors", hasSize(8)));
     }
 }

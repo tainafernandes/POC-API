@@ -3,7 +3,7 @@ package io.github.tainafernandes.POCAPI.api.service;
 import io.github.tainafernandes.POCAPI.api.entities.Address;
 import io.github.tainafernandes.POCAPI.api.enums.StateAbbreviations;
 import io.github.tainafernandes.POCAPI.api.repository.AddressRepository;
-import io.github.tainafernandes.POCAPI.api.services.impl.AddressServiceImpl;
+import io.github.tainafernandes.POCAPI.api.service.impl.AddressServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -13,7 +13,6 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import static org.assertj.core.api.Assertions.as;
 import static org.assertj.core.api.Assertions.assertThat;
 @ExtendWith(SpringExtension.class)
 @ActiveProfiles("test")
