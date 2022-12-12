@@ -13,7 +13,7 @@ public class AddressServiceImpl implements AddressService {
     private final AddressRepository repository;
     @Override
     public Address save(Address address) {
-        if(repository.existByStreetAndAddressNumber(address.getStreet(), address.getAddressNumber())){
+        if(repository.existsByStreetAndAddressNumber(address.getStreet(), address.getAddressNumber())){
             throw new BusinessException("Address already registered");
         }
         return repository.save(address);

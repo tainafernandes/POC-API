@@ -41,7 +41,7 @@ public class AddressServiceTest {
         //scenery
         Address address = createAddress();
         //return false
-        Mockito.when(repository.existByStreetAndAddressNumber(Mockito.anyString(), Mockito.anyString())).thenReturn(false);
+        Mockito.when(repository.existsByStreetAndAddressNumber(Mockito.anyString(), Mockito.anyString())).thenReturn(false);
 
         Mockito.when(repository.save(address)).thenReturn(
                 Address.builder().id(1L)
