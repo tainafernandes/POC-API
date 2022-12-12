@@ -1,6 +1,6 @@
 package io.github.tainafernandes.POCAPI.api.entities;
 
-import io.github.tainafernandes.POCAPI.api.enums.SiglaEstado;
+import io.github.tainafernandes.POCAPI.api.enums.StateAbbreviations;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -31,7 +31,7 @@ public class Address {
     private String city;
     @Column
     @Enumerated(EnumType.STRING)
-    private SiglaEstado state;
+    private StateAbbreviations state;
     @Column
     private String neighborhood;
     @Column

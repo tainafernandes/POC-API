@@ -1,6 +1,6 @@
 package io.github.tainafernandes.POCAPI.api.DTO;
 
-import io.github.tainafernandes.POCAPI.api.enums.SiglaEstado;
+import io.github.tainafernandes.POCAPI.api.enums.StateAbbreviations;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.validation.constraints.NotNull;
@@ -19,7 +19,7 @@ public class AddressDTO {
     private String city;
     @NotNull
     @Enumerated(EnumType.STRING)
-    private SiglaEstado state;
+    private StateAbbreviations state;
     private String neighborhood;
     private String street;
     private String addressNumber;

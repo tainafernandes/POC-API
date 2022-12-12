@@ -6,7 +6,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.github.tainafernandes.POCAPI.api.DTO.AddressDTO;
 import io.github.tainafernandes.POCAPI.api.entities.Address;
-import io.github.tainafernandes.POCAPI.api.enums.SiglaEstado;
+import io.github.tainafernandes.POCAPI.api.enums.StateAbbreviations;
 import io.github.tainafernandes.POCAPI.api.services.impl.AddressServiceImpl;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -38,7 +38,7 @@ public class AdressControllerTest {
 
     private AddressDTO createNewAddress(){
         return AddressDTO.builder().zipCode("18741-011")
-                .state(SiglaEstado.SP).city("Santo André")
+                .state(StateAbbreviations.SP).city("Santo André")
                 .neighborhood("Vila Luzita").street("Estrada do Pedroso")
                 .addressNumber("52").complement("Casa 1")
                 .build();
@@ -50,7 +50,7 @@ public class AdressControllerTest {
         //scenery
         AddressDTO dto = createNewAddress();
         Address saveAddress = Address.builder().id(1L).zipCode("18741-011")
-                .state(SiglaEstado.SP).city("Santo André")
+                .state(StateAbbreviations.SP).city("Santo André")
                 .neighborhood("Vila Luzita").street("Estrada do Pedroso")
                 .addressNumber("52").complement("Casa 1")
                 .build();
