@@ -11,9 +11,14 @@ import io.github.tainafernandes.POCAPI.api.DTO.AddressDTO;
 import io.github.tainafernandes.POCAPI.api.entities.Address;
 import io.github.tainafernandes.POCAPI.api.enums.StateAbbreviations;
 import io.github.tainafernandes.POCAPI.api.exception.BusinessException;
+import io.github.tainafernandes.POCAPI.api.repository.AddressRepository;
 import io.github.tainafernandes.POCAPI.api.repository.CustomerRepository;;
 import io.github.tainafernandes.POCAPI.api.service.impl.AddressServiceImpl;
+import java.util.Arrays;
 import java.util.Optional;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -42,8 +47,7 @@ public class AdressControllerTest {
     @MockBean
     AddressServiceImpl service;
 
-    @Autowired(required = false)
-    private CustomerRepository customerRepository;
+    private AddressRepository addressRepository;
 
     private AddressDTO createNewAddress(){
         return AddressDTO.builder().zipCode("18741-011")
@@ -254,5 +258,39 @@ public class AdressControllerTest {
 
         mvc.perform(request)
                 .andExpect(status().isNotFound());
+    }
+
+    @Test
+    @DisplayName("Must filter address")
+    public void findAddressTest() throws Exception{
+        Long id = 1L;
+
+        Address address = Address.builder().id(id)
+                .zipCode(createNewAddress().getZipCode())
+                .state(createNewAddress().getState())
+                .city(createNewAddress().getCity())
+                .neighborhood(createNewAddress().getNeighborhood())
+                .street(createNewAddress().getStreet())
+                .addressNumber(createNewAddress().getAddressNumber())
+                .complement(createNewAddress().getComplement())
+                .mainAddress(createNewAddress().getMainAddress())
+                .build();
+
+        BDDMockito.given(service.find(Mockito.any(Address.class), Mockito.any(Pageable.class)))
+                .willReturn(new PageImpl<Address>(Arrays.asList(address), PageRequest.of(0,100), 1));
+
+        String queryString = String.format("?zipCode=%s&page=0&size=100",
+                address.getZipCode());
+
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders
+                .get(ADDRESS_API.concat(queryString))
+                .accept(MediaType.APPLICATION_JSON);
+
+        mvc.perform(request)
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("content", hasSize(1)))
+                .andExpect(jsonPath("totalElements").value(1))
+                .andExpect(jsonPath("pageable.pageSize").value(100))
+                .andExpect(jsonPath("pageable.pageNumber").value(0));
     }
 }

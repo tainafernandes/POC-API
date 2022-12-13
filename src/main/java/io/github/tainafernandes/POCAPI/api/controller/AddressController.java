@@ -2,15 +2,17 @@ package io.github.tainafernandes.POCAPI.api.controller;
 
 import io.github.tainafernandes.POCAPI.api.DTO.AddressDTO;
 import io.github.tainafernandes.POCAPI.api.entities.Address;
-import io.github.tainafernandes.POCAPI.api.entities.Customer;
-import io.github.tainafernandes.POCAPI.api.enums.StateAbbreviations;
 import io.github.tainafernandes.POCAPI.api.exception.BusinessException;
 import io.github.tainafernandes.POCAPI.api.exception.apiException.ApiErrors;
-import io.github.tainafernandes.POCAPI.api.service.CustomerService;
 import io.github.tainafernandes.POCAPI.api.service.impl.AddressServiceImpl;
 import jakarta.validation.Valid;
+import java.util.List;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -71,7 +73,15 @@ public class AddressController {
         }).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
     }
 
-
+    @GetMapping
+    public Page<AddressDTO> find(AddressDTO dto, Pageable pageRequest){
+        Address filter = mapper.map(dto, Address.class);
+        Page<Address> result = service.find(filter, pageRequest);
+        List<AddressDTO> list = result.getContent().stream()
+                .map(entity -> mapper.map(entity, AddressDTO.class))
+                .collect(Collectors.toList());
+        return new PageImpl<AddressDTO>(list, pageRequest, result.getTotalElements());
+    }
 
 
 
