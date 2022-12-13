@@ -187,4 +187,55 @@ public class AdressControllerTest {
         mvc.perform(request)
                 .andExpect(status().isNoContent());
     }
+
+    @Test
+    @DisplayName("Should return resource not found when not finding address to delete")
+    public void deleteInexistentAddressTest() throws Exception{
+
+        BDDMockito.given(service.getById(anyLong())).willReturn(Optional.empty());
+
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders
+                .delete(ADDRESS_API.concat("/"+1));
+
+        mvc.perform(request)
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    @DisplayName("Must update a address")
+    public void updateAddressTest() throws Exception {
+        Long id = 1L;
+        String json = new ObjectMapper().writeValueAsString(createNewAddress());
+
+        Address updatingAddress = Address.builder().id(1L).zipCode("18741-013").state(StateAbbreviations.SP)
+                .city("São Caetano").neighborhood("Barcelona").street("Estrada do Pedroso")
+                .addressNumber("721").complement("Casa 1").mainAddress(true).build();
+        BDDMockito.given(service.getById(id))
+                .willReturn(Optional.of(updatingAddress));
+
+        Address updatedAddress = Address.builder().id(id).zipCode("18741-011")
+                .state(StateAbbreviations.SP).city("Santo André")
+                .neighborhood("Vila Luzita").street("Estrada do Pedroso")
+                .addressNumber("52").complement("Casa 1").mainAddress(true)
+                .build();
+        BDDMockito.given(service.update(updatingAddress)).willReturn(updatedAddress);
+
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders
+                .put(ADDRESS_API.concat("/"+1))
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
+                .content(json);
+
+        mvc.perform(request)
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("id").value(id))
+                .andExpect(jsonPath("zipCode").value(createNewAddress().getZipCode()))
+                .andExpect(jsonPath("state").value(createNewAddress().getState().toString()))
+                .andExpect(jsonPath("city").value(createNewAddress().getCity()))
+                .andExpect(jsonPath("neighborhood").value(createNewAddress().getNeighborhood()))
+                .andExpect(jsonPath("street").value(createNewAddress().getStreet()))
+                .andExpect(jsonPath("addressNumber").value(createNewAddress().getAddressNumber()))
+                .andExpect(jsonPath("complement").value(createNewAddress().getComplement()))
+                .andExpect(jsonPath("mainAddress").value(createNewAddress().getMainAddress()));
+    }
 }

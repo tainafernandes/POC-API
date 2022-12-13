@@ -33,5 +33,13 @@ public class AddressServiceImpl implements AddressService {
         this.repository.delete(address);
     }
 
+    @Override
+    public Address update(Address address) {
+        if(address == null || address.getId() == null){
+            throw new IllegalArgumentException("Address id cant be null");
+        }
+        return this.repository.save(address);
+    }
+
 
 }

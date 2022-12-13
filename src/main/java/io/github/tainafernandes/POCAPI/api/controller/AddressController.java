@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -52,6 +53,22 @@ public class AddressController {
     public void delete(@PathVariable Long id){
         Address address = service.getById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
         service.delete(address);
+    }
+
+    @PutMapping("{id}")
+    public AddressDTO update(@PathVariable Long id, @RequestBody @Valid AddressDTO dto){
+        return service.getById(id).map(address -> {
+            address.setZipCode(dto.getZipCode());
+            address.setState(dto.getState());
+            address.setCity(dto.getCity());
+            address.setNeighborhood(dto.getNeighborhood());
+            address.setAddressNumber(dto.getAddressNumber());
+            address.setComplement(dto.getComplement());
+            address.setMainAddress(dto.getMainAddress());
+
+            service.update(address);
+            return mapper.map(address, AddressDTO.class);
+        }).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
     }
 
 

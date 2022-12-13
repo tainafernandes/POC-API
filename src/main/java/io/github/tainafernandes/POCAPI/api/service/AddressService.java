@@ -9,4 +9,6 @@ public interface AddressService {
     Optional<Address> getById(Long id);
 
     void delete(Address address);
+
+    Address update(Address address);
 }
