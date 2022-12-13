@@ -238,4 +238,21 @@ public class AdressControllerTest {
                 .andExpect(jsonPath("complement").value(createNewAddress().getComplement()))
                 .andExpect(jsonPath("mainAddress").value(createNewAddress().getMainAddress()));
     }
+
+    @Test
+    @DisplayName("Should return 404 when trying to update a non-existent address")
+    public void updateInexistentAddressTest() throws Exception{
+        String json = new ObjectMapper().writeValueAsString(createNewAddress());
+
+        BDDMockito.given(service.getById(Mockito.anyLong())).willReturn(Optional.empty());
+
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders
+                .put(ADDRESS_API.concat("/"+1))
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
+                .content(json);
+
+        mvc.perform(request)
+                .andExpect(status().isNotFound());
+    }
 }
