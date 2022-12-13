@@ -4,6 +4,7 @@ import io.github.tainafernandes.POCAPI.api.entities.Address;
 import io.github.tainafernandes.POCAPI.api.exception.BusinessException;
 import io.github.tainafernandes.POCAPI.api.repository.AddressRepository;
 import io.github.tainafernandes.POCAPI.api.service.AddressService;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -17,5 +18,10 @@ public class AddressServiceImpl implements AddressService {
             throw new BusinessException("Address already registered");
         }
         return repository.save(address);
+    }
+
+    @Override
+    public Optional<Address> getById(Long id) {
+        return this.repository.findById(id);
     }
 }

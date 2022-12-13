@@ -9,8 +9,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import io.github.tainafernandes.POCAPI.api.DTO.AddressDTO;
 import io.github.tainafernandes.POCAPI.api.entities.Address;
 import io.github.tainafernandes.POCAPI.api.enums.StateAbbreviations;
+import io.github.tainafernandes.POCAPI.api.exception.BusinessException;
 import io.github.tainafernandes.POCAPI.api.repository.CustomerRepository;;
 import io.github.tainafernandes.POCAPI.api.service.impl.AddressServiceImpl;
+import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -35,7 +37,7 @@ public class AdressControllerTest {
 
     static String ADDRESS_API = "/api/address";
     @Autowired
-    MockMvc mvc; //utilizado para as requisições
+    MockMvc mvc; //used for requests
     @MockBean
     AddressServiceImpl service;
 
@@ -101,4 +103,62 @@ public class AdressControllerTest {
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("errors", hasSize(8)));
     }
+
+    @Test
+    @DisplayName("It should return an error trying to register an address with street and repeated number")
+    public void createAddressWithDuplicatedAddressAndAddressNumber() throws Exception{
+
+        AddressDTO dto = createNewAddress();
+        String json = new ObjectMapper().writeValueAsString(dto);
+        String msgError = "There is already a registered address with the same street and number";
+        BDDMockito.given(service.save(Mockito.any(Address.class)))
+                .willThrow(new BusinessException(msgError));
+
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders
+                .post(ADDRESS_API)
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
+                .content(json);
+
+        mvc.perform(request)
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("errors", hasSize(1)))
+                .andExpect(jsonPath("errors[0]").value(msgError));
+    }
+
+    @Test
+    @DisplayName("Must get Address information")
+    public void getAddressDetailsTest() throws Exception{
+        Long id = 1L;
+
+        Address address = Address.builder().id(id)
+                .zipCode(createNewAddress().getZipCode())
+                .state(createNewAddress().getState())
+                .city(createNewAddress().getCity())
+                .neighborhood(createNewAddress().getNeighborhood())
+                .street(createNewAddress().getStreet())
+                .addressNumber(createNewAddress().getAddressNumber())
+                .complement(createNewAddress().getComplement())
+                .mainAddress(createNewAddress().getMainAddress())
+                .build();
+        BDDMockito.given(service.getById(id)).willReturn(Optional.of(address));
+
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders
+                .get(ADDRESS_API.concat("/"+id))
+                .accept(MediaType.APPLICATION_JSON);
+
+        mvc.perform(request)
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("id").value(id))
+                .andExpect(jsonPath("zipCode").value(createNewAddress().getZipCode()))
+                .andExpect(jsonPath("state").value(createNewAddress().getState().toString()))
+                .andExpect(jsonPath("city").value(createNewAddress().getCity()))
+                .andExpect(jsonPath("neighborhood").value(createNewAddress().getNeighborhood()))
+                .andExpect(jsonPath("street").value(createNewAddress().getStreet()))
+                .andExpect(jsonPath("addressNumber").value(createNewAddress().getAddressNumber()))
+                .andExpect(jsonPath("complement").value(createNewAddress().getComplement()))
+                .andExpect(jsonPath("mainAddress").value(createNewAddress().getMainAddress()));
+    }
+
+
 }
