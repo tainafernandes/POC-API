@@ -4,6 +4,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.hamcrest.Matchers.hasSize;
+import static org.mockito.ArgumentMatchers.anyLong;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.github.tainafernandes.POCAPI.api.DTO.AddressDTO;
@@ -160,5 +161,17 @@ public class AdressControllerTest {
                 .andExpect(jsonPath("mainAddress").value(createNewAddress().getMainAddress()));
     }
 
+    @Test
+    @DisplayName("Should return resource not found when sought address does not exist")
+    public void addressNotFoundTest() throws Exception {
 
+        BDDMockito.given(service.getById(anyLong())).willReturn(Optional.empty());
+
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders
+                .get(ADDRESS_API.concat("/"+1))
+                .accept(MediaType.APPLICATION_JSON);
+
+        mvc.perform(request)
+                .andExpect(status().isNotFound());
+    }
 }
