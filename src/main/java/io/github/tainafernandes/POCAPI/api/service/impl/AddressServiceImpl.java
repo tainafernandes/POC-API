@@ -24,4 +24,14 @@ public class AddressServiceImpl implements AddressService {
     public Optional<Address> getById(Long id) {
         return this.repository.findById(id);
     }
+
+    @Override
+    public void delete(Address address) {
+        if(address == null || address.getId() == null){
+            throw new IllegalArgumentException("Address id cant be null");
+        }
+        this.repository.delete(address);
+    }
+
+
 }

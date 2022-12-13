@@ -174,4 +174,17 @@ public class AdressControllerTest {
         mvc.perform(request)
                 .andExpect(status().isNotFound());
     }
+
+    @Test
+    @DisplayName("Must delete a Address")
+    public void deleteAddressTest() throws Exception{
+
+        BDDMockito.given(service.getById(anyLong())).willReturn(Optional.of(Address.builder().id(1l).build()));
+
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders
+                .delete(ADDRESS_API.concat("/"+1));
+
+        mvc.perform(request)
+                .andExpect(status().isNoContent());
+    }
 }
