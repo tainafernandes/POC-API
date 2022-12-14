@@ -2,6 +2,7 @@ package io.github.tainafernandes.POCAPI.api.repository;
 
 import io.github.tainafernandes.POCAPI.api.entities.Address;
 import io.github.tainafernandes.POCAPI.api.enums.StateAbbreviations;
+import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -42,5 +43,63 @@ public class AddressRepositoryTest { //Integration
 
         //verification
         assertThat(exists).isTrue();
+    }
+
+    @Test
+    @DisplayName("It must return false when there is no Address in the base with the street and number informed")
+    public void returnFalseWhenStreetAndAddressNumberDoesntExists(){
+        //scenery
+        String street = "Estrada do Pedroso";
+        String addressNumber = "52";
+
+        //execution
+        boolean exist = repository.existsByStreetAndAddressNumber(street, addressNumber);
+
+        //verification
+        assertThat(exist).isFalse();
+
+    }
+
+    @Test
+    @DisplayName("Must get a Address by Id")
+    public void findByIdTest(){
+        //scenery
+        Address address = createAddress();
+        entityManager.persist(address);
+
+        //execution
+        Optional<Address> foundAddress = repository.findById(address.getId());
+
+        //verification
+        assertThat(foundAddress.isPresent()).isTrue();
+    }
+
+    @Test
+    @DisplayName("Must save a Address")
+    public void saveAddressTest(){
+        //scenery
+        Address address = createAddress();
+
+        //execution
+        Address savedAddress = repository.save(address);
+
+        //verification
+        assertThat(savedAddress.getId()).isNotNull();
+    }
+
+    @Test
+    @DisplayName("Must delete a Address")
+    public void deleteAddressTest(){
+        //scenery
+        Address address = createAddress();
+        entityManager.persist(address);
+
+        //execution
+        Address foundAddress = entityManager.find(Address.class, address.getId());
+        repository.delete(foundAddress);
+
+        //verification
+        Address deleteAddress = entityManager.find(Address.class, address.getId());
+        assertThat(deleteAddress).isNull();
     }
 }

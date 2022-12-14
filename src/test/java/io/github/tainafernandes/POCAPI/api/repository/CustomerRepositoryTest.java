@@ -93,7 +93,8 @@ public class CustomerRepositoryTest { //Integration Test
 
         Customer deletedCustomer = entityManager.find(Customer.class, customer.getId());
 
-        assertThat(deletedCustomer).isNull(); //devolve nulo pq o livro não existe
+        assertThat(deletedCustomer).isNull(); //returns null because the customer does not exist
+
 
     }
 }
