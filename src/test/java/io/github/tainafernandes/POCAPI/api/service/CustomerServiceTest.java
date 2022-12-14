@@ -23,6 +23,8 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @ExtendWith(SpringExtension.class)
 @ActiveProfiles("test")
@@ -135,7 +137,7 @@ public class CustomerServiceTest { //Only unit tests
         customer.setId(id);
 
         // execution
-        org.junit.jupiter.api.Assertions.assertDoesNotThrow(() -> service.delete(customer));
+        assertDoesNotThrow(() -> service.delete(customer));
 
         //verifications
         Mockito.verify(repository, Mockito.times(1)).delete(customer);
@@ -156,7 +158,7 @@ public class CustomerServiceTest { //Only unit tests
     public void deleteInvalidCustomerTest(){
         Customer customer = new Customer();
 
-        org.junit.jupiter.api.Assertions.assertThrows(IllegalArgumentException.class, () -> service.delete(customer));
+        assertThrows(IllegalArgumentException.class, () -> service.delete(customer));
 
         Mockito.verify(repository, Mockito.never()).delete(customer); //Never call method delete
     }
@@ -166,7 +168,7 @@ public class CustomerServiceTest { //Only unit tests
     public void updateInvalidCustomerTest(){
         Customer customer = new Customer();
 
-        org.junit.jupiter.api.Assertions.assertThrows(IllegalArgumentException.class, () -> service.update(customer));
+        assertThrows(IllegalArgumentException.class, () -> service.update(customer));
 
         Mockito.verify(repository, Mockito.never()).save(customer); //Never call method delete
     }
