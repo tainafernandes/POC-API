@@ -1,6 +1,5 @@
 package io.github.tainafernandes.POCAPI.api.controller;
 
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.hamcrest.Matchers.hasSize;
@@ -12,7 +11,7 @@ import io.github.tainafernandes.POCAPI.api.entities.Address;
 import io.github.tainafernandes.POCAPI.api.enums.StateAbbreviations;
 import io.github.tainafernandes.POCAPI.api.exception.BusinessException;
 import io.github.tainafernandes.POCAPI.api.repository.AddressRepository;
-import io.github.tainafernandes.POCAPI.api.repository.CustomerRepository;;
+;
 import io.github.tainafernandes.POCAPI.api.service.impl.AddressServiceImpl;
 import java.util.Arrays;
 import java.util.Optional;
@@ -39,7 +38,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 @ExtendWith(SpringExtension.class)
 @ActiveProfiles("test")
 @AutoConfigureMockMvc
-public class AdressControllerTest {
+public class AddressControllerTest {
 
     static String ADDRESS_API = "/api/address";
     @Autowired

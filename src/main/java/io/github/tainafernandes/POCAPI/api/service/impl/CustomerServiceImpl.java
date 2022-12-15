@@ -1,6 +1,7 @@
 package io.github.tainafernandes.POCAPI.api.service.impl;
 
 import io.github.tainafernandes.POCAPI.api.entities.Customer;
+import io.github.tainafernandes.POCAPI.api.exception.AddressException;
 import io.github.tainafernandes.POCAPI.api.exception.BusinessException;
 import io.github.tainafernandes.POCAPI.api.repository.CustomerRepository;
 import io.github.tainafernandes.POCAPI.api.service.CustomerService;
