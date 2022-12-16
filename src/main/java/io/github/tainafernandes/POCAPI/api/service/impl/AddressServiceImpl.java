@@ -1,11 +1,12 @@
 package io.github.tainafernandes.POCAPI.api.service.impl;
 
-import io.github.tainafernandes.POCAPI.api.DTO.CustomerDTO;
+import io.github.tainafernandes.POCAPI.api.DTO.AddressDTO;
 import io.github.tainafernandes.POCAPI.api.entities.Address;
 import io.github.tainafernandes.POCAPI.api.entities.Customer;
 import io.github.tainafernandes.POCAPI.api.exception.AddressException;
 import io.github.tainafernandes.POCAPI.api.exception.BusinessException;
 import io.github.tainafernandes.POCAPI.api.repository.AddressRepository;
+import io.github.tainafernandes.POCAPI.api.repository.CustomerRepository;
 import io.github.tainafernandes.POCAPI.api.service.AddressService;
 import io.github.tainafernandes.POCAPI.api.service.CustomerService;
 import java.util.Optional;
@@ -22,28 +23,32 @@ import org.springframework.stereotype.Service;
 public class AddressServiceImpl implements AddressService {
     private final AddressRepository repository;
     private final ModelMapper mapper;
-
     private final CustomerService customerService;
+    private final CustomerRepository customerRepository;
+
+
     @Override
-    public Address save(Address address) {
-        Optional<Customer> customer = customerService.getById(address.getCustomer().getId());
-        address.setCustomer(mapper.map(customer, Customer.class));
+    public Address save(AddressDTO address) {
+        Customer customer = customerRepository.findById(address.getCustomerId()).orElseThrow();
         if(repository.existsByStreetAndAddressNumber(address.getStreet(), address.getAddressNumber())){
             throw new BusinessException("Address already registered");
         }
-        if(customer.get().getAddress().isEmpty()){
+        if(customer.getAddress().isEmpty()){
             address.setMainAddress(true);
         } else {
             address.setMainAddress(false);
         }
-        if(customer.get().getAddress().size() > 5 ){
+        if(customer.getAddress().size() > 5){
             throw new AddressException("You have reached the maximum amount of 5 registered addresses");
         }
-        return repository.save(address);
+        return repository.save(mapper.map(address, Address.class));
     }
 
     @Override
     public Optional<Address> getById(Long id) {
+        if (repository.findById(id).isEmpty()){
+            new AddressException("Address not found");
+        }
         return this.repository.findById(id);
     }
 

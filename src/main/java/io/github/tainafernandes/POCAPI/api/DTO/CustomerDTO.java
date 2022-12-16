@@ -1,10 +1,12 @@
 package io.github.tainafernandes.POCAPI.api.DTO;
 
+import io.github.tainafernandes.POCAPI.api.entities.Address;
 import io.github.tainafernandes.POCAPI.api.enums.documentType;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -28,4 +30,6 @@ public class CustomerDTO {
     private documentType documentType;
     @NotBlank
     private String phoneNumber;
+
+    private List<Address> addressList;
 }

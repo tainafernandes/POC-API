@@ -1,12 +1,14 @@
 package io.github.tainafernandes.POCAPI.api.service;
 
+import io.github.tainafernandes.POCAPI.api.DTO.AddressDTO;
 import io.github.tainafernandes.POCAPI.api.entities.Address;
+import io.github.tainafernandes.POCAPI.api.entities.Customer;
 import java.util.Optional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 public interface AddressService {
-    Address save(Address address);
+    Address save(AddressDTO address);
 
     Optional<Address> getById(Long id);
 

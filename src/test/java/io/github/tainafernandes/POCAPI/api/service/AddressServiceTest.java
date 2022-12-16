@@ -1,10 +1,14 @@
 package io.github.tainafernandes.POCAPI.api.service;
 
+import io.github.tainafernandes.POCAPI.api.DTO.CustomerDTO;
 import io.github.tainafernandes.POCAPI.api.entities.Address;
+import io.github.tainafernandes.POCAPI.api.entities.Customer;
 import io.github.tainafernandes.POCAPI.api.enums.StateAbbreviations;
+import io.github.tainafernandes.POCAPI.api.enums.documentType;
 import io.github.tainafernandes.POCAPI.api.exception.BusinessException;
 import io.github.tainafernandes.POCAPI.api.repository.AddressRepository;
 import io.github.tainafernandes.POCAPI.api.service.impl.AddressServiceImpl;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -14,6 +18,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
+import org.modelmapper.ModelMapper;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Page;
@@ -30,12 +35,16 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 @ActiveProfiles("test")
 public class AddressServiceTest {
     AddressServiceImpl service;
+
+    ModelMapper mapper;
+
+    CustomerService customerService;
     @MockBean
     AddressRepository repository;
 
     @BeforeEach
     public void setUp(){
-        this.service = new AddressServiceImpl(repository);
+        this.service =  new AddressServiceImpl(repository, mapper, customerService);
     }
 
     private Address createAddress(){
@@ -68,6 +77,8 @@ public class AddressServiceTest {
 
         //Is equal to?!
         assertThat(saveAddress.getId()).isNotNull();
+//        assertThat(saveAddress.getCustomer().getAddress().isEmpty());
+//        assertThat(saveAddress.getCustomer().getAddress().size() < 5);
         assertThat(saveAddress.getZipCode()).isEqualTo("18741-011");
         assertThat(saveAddress.getState()).isEqualTo(StateAbbreviations.SP);
         assertThat(saveAddress.getCity()).isEqualTo("Santo André");

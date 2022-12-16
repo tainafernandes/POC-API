@@ -45,6 +45,7 @@ public class CustomerController {
         return mapper.map(entity, CustomerDTO.class);
     }
     @GetMapping("{id}")
+    @ResponseStatus(HttpStatus.OK)
     public CustomerDTO get(@PathVariable Long id){
         return service.getById(id)
                 .map(customer -> mapper.map(customer, CustomerDTO.class))

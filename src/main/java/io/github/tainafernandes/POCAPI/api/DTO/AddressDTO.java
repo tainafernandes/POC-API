@@ -15,7 +15,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class AddressDTO {
-    private Long id;
 
     @NotBlank
     private String zipCode;
@@ -34,4 +33,6 @@ public class AddressDTO {
     private String complement;
     @NotNull
     private Boolean mainAddress;
+    private Long customerId;
+
 }

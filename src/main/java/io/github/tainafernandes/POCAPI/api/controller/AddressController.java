@@ -1,7 +1,9 @@
 package io.github.tainafernandes.POCAPI.api.controller;
 
 import io.github.tainafernandes.POCAPI.api.DTO.AddressDTO;
+import io.github.tainafernandes.POCAPI.api.DTO.CustomerDTO;
 import io.github.tainafernandes.POCAPI.api.entities.Address;
+import io.github.tainafernandes.POCAPI.api.entities.Customer;
 import io.github.tainafernandes.POCAPI.api.exception.BusinessException;
 import io.github.tainafernandes.POCAPI.api.exception.apiException.ApiErrors;
 import io.github.tainafernandes.POCAPI.api.service.impl.AddressServiceImpl;
@@ -38,12 +40,13 @@ public class AddressController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public AddressDTO create(@RequestBody @Valid AddressDTO dto){
-        Address entity = mapper.map(dto, Address.class);
-        entity = service.save(entity);
-        return mapper.map(entity, AddressDTO.class);
+        //Address entity = mapper.map(dto, Address.class);
+        final Address save = service.save(dto);
+        return mapper.map(save, AddressDTO.class);
     }
 
     @GetMapping("{id}")
+    @ResponseStatus(HttpStatus.OK)
     public AddressDTO get(@PathVariable Long id){
         return service.getById(id)
                 .map(address -> mapper.map(address, AddressDTO.class))
@@ -58,6 +61,7 @@ public class AddressController {
     }
 
     @PutMapping("{id}")
+    @ResponseStatus(HttpStatus.OK)
     public AddressDTO update(@PathVariable Long id, @RequestBody @Valid AddressDTO dto){
         return service.getById(id).map(address -> {
             address.setZipCode(dto.getZipCode());
@@ -74,6 +78,7 @@ public class AddressController {
     }
 
     @GetMapping
+    @ResponseStatus(HttpStatus.OK)
     public Page<AddressDTO> find(AddressDTO dto, Pageable pageRequest){
         Address filter = mapper.map(dto, Address.class);
         Page<Address> result = service.find(filter, pageRequest);
