@@ -1,8 +1,5 @@
 package io.github.tainafernandes.POCAPI.api.DTO;
 
-import io.github.tainafernandes.POCAPI.api.enums.StateAbbreviations;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;

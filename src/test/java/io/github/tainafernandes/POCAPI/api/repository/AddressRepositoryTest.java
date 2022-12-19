@@ -1,7 +1,6 @@
 package io.github.tainafernandes.POCAPI.api.repository;
 
 import io.github.tainafernandes.POCAPI.api.entities.Address;
-import io.github.tainafernandes.POCAPI.api.enums.StateAbbreviations;
 import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

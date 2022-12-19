@@ -2,16 +2,9 @@ package io.github.tainafernandes.POCAPI.api.service;
 
 import io.github.tainafernandes.POCAPI.api.DTO.AddressDTO;
 import io.github.tainafernandes.POCAPI.api.entities.Address;
-import io.github.tainafernandes.POCAPI.api.entities.Customer;
-import io.github.tainafernandes.POCAPI.api.enums.StateAbbreviations;
-import io.github.tainafernandes.POCAPI.api.exception.BusinessException;
 import io.github.tainafernandes.POCAPI.api.repository.AddressRepository;
 import io.github.tainafernandes.POCAPI.api.repository.CustomerRepository;
 import io.github.tainafernandes.POCAPI.api.service.impl.AddressServiceImpl;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -19,15 +12,10 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
 import org.modelmapper.ModelMapper;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.data.domain.Example;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @ExtendWith(SpringExtension.class)

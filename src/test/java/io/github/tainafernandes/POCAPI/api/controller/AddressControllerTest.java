@@ -8,7 +8,6 @@ import static org.mockito.ArgumentMatchers.anyLong;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.github.tainafernandes.POCAPI.api.DTO.AddressDTO;
 import io.github.tainafernandes.POCAPI.api.entities.Address;
-import io.github.tainafernandes.POCAPI.api.enums.StateAbbreviations;
 import io.github.tainafernandes.POCAPI.api.exception.BusinessException;
 import io.github.tainafernandes.POCAPI.api.repository.AddressRepository;
 ;
