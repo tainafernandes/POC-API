@@ -68,7 +68,7 @@ public class AddressControllerTest {
                 .addressNumber("52").complement("Casa 1").mainAddress(true)
                 .build();
 
-        BDDMockito.given(service.save(Mockito.any(Address.class))).willReturn(saveAddress);
+        BDDMockito.given(service.save(Mockito.any(AddressDTO.class))).willReturn(saveAddress);
 
         String json = new ObjectMapper().writeValueAsString(dto);
 
@@ -115,7 +115,7 @@ public class AddressControllerTest {
         AddressDTO dto = createNewAddress();
         String json = new ObjectMapper().writeValueAsString(dto);
         String msgError = "There is already a registered address with the same street and number";
-        BDDMockito.given(service.save(Mockito.any(Address.class)))
+        BDDMockito.given(service.save(Mockito.any(AddressDTO.class)))
                 .willThrow(new BusinessException(msgError));
 
         MockHttpServletRequestBuilder request = MockMvcRequestBuilders

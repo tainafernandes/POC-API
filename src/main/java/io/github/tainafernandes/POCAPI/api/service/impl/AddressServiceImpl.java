@@ -1,6 +1,8 @@
 package io.github.tainafernandes.POCAPI.api.service.impl;
 
+import com.google.gson.Gson;
 import io.github.tainafernandes.POCAPI.api.DTO.AddressDTO;
+import io.github.tainafernandes.POCAPI.api.DTO.AddressViaCepDTO;
 import io.github.tainafernandes.POCAPI.api.entities.Address;
 import io.github.tainafernandes.POCAPI.api.entities.Customer;
 import io.github.tainafernandes.POCAPI.api.exception.AddressException;
@@ -8,7 +10,7 @@ import io.github.tainafernandes.POCAPI.api.exception.BusinessException;
 import io.github.tainafernandes.POCAPI.api.repository.AddressRepository;
 import io.github.tainafernandes.POCAPI.api.repository.CustomerRepository;
 import io.github.tainafernandes.POCAPI.api.service.AddressService;
-import io.github.tainafernandes.POCAPI.api.service.CustomerService;
+import io.github.tainafernandes.POCAPI.api.integrations.viaCep;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -23,12 +25,28 @@ import org.springframework.stereotype.Service;
 public class AddressServiceImpl implements AddressService {
     private final AddressRepository repository;
     private final ModelMapper mapper;
-    private final CustomerService customerService;
     private final CustomerRepository customerRepository;
+
+    private final viaCep viaCep;
 
 
     @Override
-    public Address save(AddressDTO address) {
+    public Address save(AddressViaCepDTO addressViaCepDTO) throws Exception {
+        //Consumo da API Externa
+        AddressViaCepDTO viaCepDTO = viaCep.getCepDTO(addressViaCepDTO.getCep());
+        AddressDTO address = new AddressDTO();
+        address.setZipCode(addressViaCepDTO.getCep());
+        address.setState(viaCepDTO.getUf());
+        address.setCity(viaCepDTO.getLocalidade());
+        address.setAddressNumber(addressViaCepDTO.getAddressNumber());
+        address.setStreet(viaCepDTO.getLogradouro());
+        address.setDistrict(viaCepDTO.getBairro());
+        address.setCustomerId(addressViaCepDTO.getCustomerId());
+        address.setMainAddress(addressViaCepDTO.getMainAddress());
+        address.setComplement(addressViaCepDTO.getComplemento());
+
+        //Fim consumo
+
         Customer customer = customerRepository.findById(address.getCustomerId()).orElseThrow();
         if(repository.existsByStreetAndAddressNumber(address.getStreet(), address.getAddressNumber())){
             throw new BusinessException("Address already registered");

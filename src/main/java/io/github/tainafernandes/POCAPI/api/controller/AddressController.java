@@ -1,6 +1,7 @@
 package io.github.tainafernandes.POCAPI.api.controller;
 
 import io.github.tainafernandes.POCAPI.api.DTO.AddressDTO;
+import io.github.tainafernandes.POCAPI.api.DTO.AddressViaCepDTO;
 import io.github.tainafernandes.POCAPI.api.DTO.CustomerDTO;
 import io.github.tainafernandes.POCAPI.api.entities.Address;
 import io.github.tainafernandes.POCAPI.api.entities.Customer;
@@ -39,8 +40,8 @@ public class AddressController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public AddressDTO create(@RequestBody @Valid AddressDTO dto){
-        //Address entity = mapper.map(dto, Address.class);
+    public AddressDTO create(@RequestBody @Valid AddressViaCepDTO dto) throws Exception {
+       // AddressViaCepDTO entity = mapper.map(dto, AddressViaCepDTO.class);
         final Address save = service.save(dto);
         return mapper.map(save, AddressDTO.class);
     }
@@ -67,7 +68,7 @@ public class AddressController {
             address.setZipCode(dto.getZipCode());
             address.setState(dto.getState());
             address.setCity(dto.getCity());
-            address.setNeighborhood(dto.getNeighborhood());
+            address.setDistrict(dto.getDistrict());
             address.setAddressNumber(dto.getAddressNumber());
             address.setComplement(dto.getComplement());
             address.setMainAddress(dto.getMainAddress());

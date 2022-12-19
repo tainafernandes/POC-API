@@ -33,10 +33,9 @@ public class Address {
     @Column
     private String city;
     @Column
-    @Enumerated(EnumType.STRING)
-    private StateAbbreviations state;
+    private String state;
     @Column
-    private String neighborhood;
+    private String district;
     @Column
     private String street;
     @Column

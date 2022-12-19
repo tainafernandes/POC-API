@@ -15,24 +15,24 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class AddressDTO {
-
+    private Long id;
     @NotBlank
-    private String zipCode;
+    private String state;
     @NotBlank
     private String city;
-    @NotNull
-    @Enumerated(EnumType.STRING)
-    private StateAbbreviations state;
     @NotBlank
-    private String neighborhood;
+    private String district;
     @NotBlank
     private String street;
     @NotBlank
     private String addressNumber;
     @NotBlank
     private String complement;
+    @NotBlank
+    private String zipCode;
     @NotNull
     private Boolean mainAddress;
+
     private Long customerId;
 
 }
