@@ -19,12 +19,14 @@ import org.springframework.stereotype.Service;
 public class CustomerServiceImpl implements CustomerService {
     private final CustomerRepository repository;
 
+    private final ModelMapper mapper;
+
     @Override
-    public Customer save(Customer customer){
-        if(repository.existsByDocument(customer.getDocument())){
+    public Customer save(CustomerDTO customerDTO){
+        if(repository.existsByDocument(customerDTO.getDocument())){
             throw new BusinessException("Document already registered");
         }
-        return repository.save(customer);
+        return repository.save(mapper.map(customerDTO, Customer.class));
     }
 
     @Override

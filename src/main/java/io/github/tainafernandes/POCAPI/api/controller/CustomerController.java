@@ -40,9 +40,9 @@ public class CustomerController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public CustomerDTO create(@RequestBody @Valid CustomerDTO dto){
-        Customer entity = mapper.map(dto, Customer.class);
-        entity = service.save(entity);
-        return mapper.map(entity, CustomerDTO.class);
+        //Customer entity = mapper.map(dto, Customer.class);
+        final Customer save = service.save(dto);
+        return mapper.map(save, CustomerDTO.class);
     }
     @GetMapping("{id}")
     @ResponseStatus(HttpStatus.OK)
