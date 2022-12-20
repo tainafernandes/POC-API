@@ -5,8 +5,10 @@ import io.github.tainafernandes.POCAPI.api.enums.documentType;
 import io.github.tainafernandes.POCAPI.api.validation.CnpjGroup;
 import io.github.tainafernandes.POCAPI.api.validation.CpfGroup;
 import io.github.tainafernandes.POCAPI.api.validation.CustomerGroupSequenceProvider;
+import jakarta.persistence.Column;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jakarta.persistence.Version;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -43,4 +45,8 @@ public class CustomerDTO {
     private String phoneNumber;
 
     private List<Address> addressList;
+
+    @Version
+    @Column
+    private long version;
 }

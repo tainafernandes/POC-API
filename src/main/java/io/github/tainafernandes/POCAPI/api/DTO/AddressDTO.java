@@ -1,5 +1,7 @@
 package io.github.tainafernandes.POCAPI.api.DTO;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Version;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -31,5 +33,9 @@ public class AddressDTO {
     private Boolean mainAddress;
 
     private Long customerId;
+
+    @Version
+    @Column
+    private long version;
 
 }
