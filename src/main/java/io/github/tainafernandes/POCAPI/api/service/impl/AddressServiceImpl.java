@@ -11,6 +11,7 @@ import io.github.tainafernandes.POCAPI.api.integrations.viaCep;
 import io.github.tainafernandes.POCAPI.api.repository.AddressRepository;
 import io.github.tainafernandes.POCAPI.api.repository.CustomerRepository;
 import io.github.tainafernandes.POCAPI.api.service.AddressService;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Example;
@@ -32,6 +33,7 @@ public class AddressServiceImpl implements AddressService {
 
 
     @Override
+    @Transactional
     public Address save(AddressViaCepDTO addressViaCepDTO) throws Exception {
         //Consumo da API Externa
         AddressViaCepDTO viaCepDTO = viaCep.getCepDTO(addressViaCepDTO.getCep());
@@ -69,6 +71,7 @@ public class AddressServiceImpl implements AddressService {
     }
 
     @Override
+    @Transactional
     public void delete(Address address) {
         if (address == null || address.getId() == null) {
             throw new IllegalArgumentException("Address id cant be null");
@@ -77,6 +80,7 @@ public class AddressServiceImpl implements AddressService {
     }
 
     @Override
+    @Transactional
     public Address update(Long id, AddressRequestDto addressRequestDto) {
         if(addressRequestDto == null) {
             throw new IllegalArgumentException("Address id cant be null");
