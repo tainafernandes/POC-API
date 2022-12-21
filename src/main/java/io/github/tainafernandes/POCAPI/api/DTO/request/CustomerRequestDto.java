@@ -1,6 +1,5 @@
-package io.github.tainafernandes.POCAPI.api.DTO;
+package io.github.tainafernandes.POCAPI.api.DTO.request;
 
-import io.github.tainafernandes.POCAPI.api.entities.Address;
 import io.github.tainafernandes.POCAPI.api.enums.documentType;
 import io.github.tainafernandes.POCAPI.api.validation.CnpjGroup;
 import io.github.tainafernandes.POCAPI.api.validation.CpfGroup;
@@ -12,21 +11,22 @@ import jakarta.persistence.Version;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.hibernate.validator.constraints.br.CNPJ;
 import org.hibernate.validator.constraints.br.CPF;
 import org.hibernate.validator.group.GroupSequenceProvider;
 
-@Data
+@Getter @Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @GroupSequenceProvider(CustomerGroupSequenceProvider.class)
-public class CustomerDTO {
+public class CustomerRequestDto {
 
     private Long id;
     @NotBlank
@@ -43,8 +43,6 @@ public class CustomerDTO {
     private documentType documentType;
     @NotBlank
     private String phoneNumber;
-
-    private List<Address> addressList;
 
     @Version
     @Column

@@ -1,6 +1,7 @@
 package io.github.tainafernandes.POCAPI.api.controller;
 
-import io.github.tainafernandes.POCAPI.api.DTO.CustomerDTO;
+import io.github.tainafernandes.POCAPI.api.DTO.request.CustomerRequestDto;
+import io.github.tainafernandes.POCAPI.api.DTO.response.CustomerDtoResponse;
 import io.github.tainafernandes.POCAPI.api.entities.Customer;
 import io.github.tainafernandes.POCAPI.api.exception.BusinessException;
 import io.github.tainafernandes.POCAPI.api.exception.apiException.ApiErrors;
@@ -39,16 +40,14 @@ public class CustomerController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public CustomerDTO create(@RequestBody @Valid CustomerDTO dto){
-        //Customer entity = mapper.map(dto, Customer.class);
-        final Customer save = service.save(dto);
-        return mapper.map(save, CustomerDTO.class);
+    public CustomerDtoResponse create(@RequestBody @Valid CustomerRequestDto dto){
+        return mapper.map(service.save(dto), CustomerDtoResponse.class);
     }
     @GetMapping("{id}")
     @ResponseStatus(HttpStatus.OK)
-    public CustomerDTO get(@PathVariable Long id){
+    public CustomerRequestDto get(@PathVariable Long id){
         return service.getById(id)
-                .map(customer -> mapper.map(customer, CustomerDTO.class))
+                .map(customer -> mapper.map(customer, CustomerRequestDto.class))
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
     }
 
@@ -59,7 +58,7 @@ public class CustomerController {
         service.delete(customer);
     }
     @PutMapping("{id}")
-    public CustomerDTO update(@PathVariable Long id, @RequestBody @Valid CustomerDTO dto){
+    public CustomerRequestDto update(@PathVariable Long id, @RequestBody @Valid CustomerRequestDto dto){
         return  service.getById(id).map(customer -> {
             customer.setName(dto.getName());
             customer.setEmail(dto.getEmail());
@@ -68,19 +67,19 @@ public class CustomerController {
             customer.setPhoneNumber(dto.getPhoneNumber());
 
             service.update(customer);
-            return mapper.map(customer, CustomerDTO.class);
+            return mapper.map(customer, CustomerRequestDto.class);
         }).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
 
     }
 
     @GetMapping
-    public Page<CustomerDTO> find(CustomerDTO dto, Pageable pageRequest){
+    public Page<CustomerRequestDto> find(CustomerRequestDto dto, Pageable pageRequest){
         Customer filter = mapper.map(dto, Customer.class);
         Page<Customer> result = service.find(filter, pageRequest); //Here it returns a Customer page, but I have to return a CustomerDto page
-        List<CustomerDTO> list = result.getContent().stream()
-                .map(entity -> mapper.map(entity, CustomerDTO.class))
+        List<CustomerRequestDto> list = result.getContent().stream()
+                .map(entity -> mapper.map(entity, CustomerRequestDto.class))
                 .collect(Collectors.toList());
-        return new PageImpl<CustomerDTO>(list, pageRequest, result.getTotalElements());
+        return new PageImpl<CustomerRequestDto>(list, pageRequest, result.getTotalElements());
     }
 
 

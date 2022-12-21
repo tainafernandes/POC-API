@@ -1,6 +1,5 @@
 package io.github.tainafernandes.POCAPI.api.entities;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.github.tainafernandes.POCAPI.api.enums.documentType;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -18,11 +17,12 @@ import java.util.ArrayList;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-@Data
 @Table
+@Getter @Setter
 @Entity
 @Builder
 @NoArgsConstructor
@@ -43,9 +43,8 @@ public class Customer {
     private documentType documentType;
     @Column
     private String phoneNumber;
-    @JsonIgnore
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "customer", fetch = FetchType.EAGER)
-    private List<Address> address = new ArrayList<>();
+    private List<Address> addresses = new ArrayList<>();
     @Version
     @Column
     private long version;

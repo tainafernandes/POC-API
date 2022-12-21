@@ -1,10 +1,9 @@
 package io.github.tainafernandes.POCAPI.api.controller;
 
-import io.github.tainafernandes.POCAPI.api.DTO.AddressDTO;
-import io.github.tainafernandes.POCAPI.api.DTO.AddressViaCepDTO;
-import io.github.tainafernandes.POCAPI.api.DTO.CustomerDTO;
+import io.github.tainafernandes.POCAPI.api.DTO.request.AddressRequestDto;
+import io.github.tainafernandes.POCAPI.api.DTO.response.AddressResponseDto;
+import io.github.tainafernandes.POCAPI.api.DTO.request.AddressViaCepDTO;
 import io.github.tainafernandes.POCAPI.api.entities.Address;
-import io.github.tainafernandes.POCAPI.api.entities.Customer;
 import io.github.tainafernandes.POCAPI.api.exception.BusinessException;
 import io.github.tainafernandes.POCAPI.api.exception.apiException.ApiErrors;
 import io.github.tainafernandes.POCAPI.api.service.impl.AddressServiceImpl;
@@ -29,7 +28,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.server.ResponseStatusException;
 
 @RestController
 @RequestMapping("/api/address")
@@ -40,53 +38,40 @@ public class AddressController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public AddressDTO create(@RequestBody @Valid AddressViaCepDTO dto) throws Exception {
+    public AddressResponseDto create(@RequestBody @Valid AddressViaCepDTO dto) throws Exception {
        // AddressViaCepDTO entity = mapper.map(dto, AddressViaCepDTO.class);
         final Address save = service.save(dto);
-        return mapper.map(save, AddressDTO.class);
+        return mapper.map(save, AddressResponseDto.class);
     }
 
     @GetMapping("{id}")
     @ResponseStatus(HttpStatus.OK)
-    public AddressDTO get(@PathVariable Long id){
-        return service.getById(id)
-                .map(address -> mapper.map(address, AddressDTO.class))
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+    public AddressResponseDto get(@PathVariable Long id){
+        return mapper.map(service.getById(id), AddressResponseDto.class);
     }
 
     @DeleteMapping("{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@PathVariable Long id){
-        Address address = service.getById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+        Address address = service.getById(id);
         service.delete(address);
     }
 
     @PutMapping("{id}")
     @ResponseStatus(HttpStatus.OK)
-    public AddressDTO update(@PathVariable Long id, @RequestBody @Valid AddressDTO dto){
-        return service.getById(id).map(address -> {
-            address.setZipCode(dto.getZipCode());
-            address.setState(dto.getState());
-            address.setCity(dto.getCity());
-            address.setDistrict(dto.getDistrict());
-            address.setAddressNumber(dto.getAddressNumber());
-            address.setComplement(dto.getComplement());
-            address.setMainAddress(dto.getMainAddress());
-
-            service.update(address);
-            return mapper.map(address, AddressDTO.class);
-        }).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+    public AddressResponseDto update(@PathVariable Long id, @RequestBody @Valid AddressRequestDto dto){
+        return mapper.map(service.update(id, dto), AddressResponseDto.class);
     }
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    public Page<AddressDTO> find(AddressDTO dto, Pageable pageRequest){
+    public Page<AddressResponseDto> find(AddressResponseDto dto, Pageable pageRequest){
         Address filter = mapper.map(dto, Address.class);
         Page<Address> result = service.find(filter, pageRequest);
-        List<AddressDTO> list = result.getContent().stream()
-                .map(entity -> mapper.map(entity, AddressDTO.class))
+        List<AddressResponseDto> list = result.getContent().stream()
+                .map(entity -> mapper.map(entity, AddressResponseDto.class))
                 .collect(Collectors.toList());
-        return new PageImpl<AddressDTO>(list, pageRequest, result.getTotalElements());
+        return new PageImpl<AddressResponseDto>(list, pageRequest, result.getTotalElements());
     }
 
 

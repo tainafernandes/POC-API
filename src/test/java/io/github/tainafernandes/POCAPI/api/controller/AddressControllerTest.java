@@ -6,7 +6,7 @@ import static org.hamcrest.Matchers.hasSize;
 import static org.mockito.ArgumentMatchers.anyLong;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.github.tainafernandes.POCAPI.api.DTO.AddressDTO;
+import io.github.tainafernandes.POCAPI.api.DTO.response.AddressResponseDto;
 import io.github.tainafernandes.POCAPI.api.entities.Address;
 import io.github.tainafernandes.POCAPI.api.exception.BusinessException;
 import io.github.tainafernandes.POCAPI.api.repository.AddressRepository;
@@ -47,8 +47,8 @@ public class AddressControllerTest {
 
     private AddressRepository addressRepository;
 
-    private AddressDTO createNewAddress(){
-        return AddressDTO.builder().zipCode("18741-011")
+    private AddressResponseDto createNewAddress(){
+        return AddressResponseDto.builder().zipCode("18741-011")
                 .state(StateAbbreviations.SP).city("Santo André")
                 .neighborhood("Vila Luzita").street("Estrada do Pedroso")
                 .addressNumber("52").complement("Casa 1").mainAddress(true)
@@ -60,14 +60,14 @@ public class AddressControllerTest {
     @DisplayName("Must successfully create a address")
     public void createAddressTest() throws Exception{
         //scenery
-        AddressDTO dto = createNewAddress();
+        AddressResponseDto dto = createNewAddress();
         Address saveAddress = Address.builder().id(1L).zipCode("18741-011")
                 .state(StateAbbreviations.SP).city("Santo André")
                 .neighborhood("Vila Luzita").street("Estrada do Pedroso")
                 .addressNumber("52").complement("Casa 1").mainAddress(true)
                 .build();
 
-        BDDMockito.given(service.save(Mockito.any(AddressDTO.class))).willReturn(saveAddress);
+        BDDMockito.given(service.save(Mockito.any(AddressResponseDto.class))).willReturn(saveAddress);
 
         String json = new ObjectMapper().writeValueAsString(dto);
 
@@ -94,7 +94,7 @@ public class AddressControllerTest {
     @DisplayName("Should throw an error when there is not all the data to create an address")
     public void createInvalidAddressTest() throws Exception{
 
-        String json = new ObjectMapper().writeValueAsString(new AddressDTO());
+        String json = new ObjectMapper().writeValueAsString(new AddressResponseDto());
 
         MockHttpServletRequestBuilder request = MockMvcRequestBuilders
                 .post(ADDRESS_API)
@@ -111,10 +111,10 @@ public class AddressControllerTest {
     @DisplayName("It should return an error trying to register an address with street and repeated number")
     public void createAddressWithDuplicatedAddressAndAddressNumber() throws Exception{
 
-        AddressDTO dto = createNewAddress();
+        AddressResponseDto dto = createNewAddress();
         String json = new ObjectMapper().writeValueAsString(dto);
         String msgError = "There is already a registered address with the same street and number";
-        BDDMockito.given(service.save(Mockito.any(AddressDTO.class)))
+        BDDMockito.given(service.save(Mockito.any(AddressResponseDto.class)))
                 .willThrow(new BusinessException(msgError));
 
         MockHttpServletRequestBuilder request = MockMvcRequestBuilders

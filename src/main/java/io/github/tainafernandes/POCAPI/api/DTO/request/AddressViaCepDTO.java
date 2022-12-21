@@ -1,4 +1,4 @@
-package io.github.tainafernandes.POCAPI.api.DTO;
+package io.github.tainafernandes.POCAPI.api.DTO.request;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;

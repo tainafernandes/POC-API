@@ -1,20 +1,18 @@
-package io.github.tainafernandes.POCAPI.api.DTO;
+package io.github.tainafernandes.POCAPI.api.DTO.request;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Version;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-@Data
-@Builder
+@Getter @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class AddressDTO {
-    private Long id;
+public class AddressRequestDto {
     @NotBlank
     private String state;
     @NotBlank
@@ -29,7 +27,6 @@ public class AddressDTO {
     private String complement;
     @NotBlank
     private String zipCode;
-    @NotNull
     private Boolean mainAddress;
 
     private Long customerId;
@@ -37,5 +34,4 @@ public class AddressDTO {
     @Version
     @Column
     private long version;
-
 }

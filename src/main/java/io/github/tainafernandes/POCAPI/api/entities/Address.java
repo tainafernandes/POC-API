@@ -12,11 +12,12 @@ import jakarta.persistence.Table;
 import jakarta.persistence.Version;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-@Data
 @Table
+@Getter @Setter
 @Entity
 @Builder
 @NoArgsConstructor
@@ -26,19 +27,18 @@ public class Address {
     @Column
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column
+    @Column(nullable = false)
     private String zipCode;
-    @Column
+    @Column(nullable = false)
     private String city;
-    @Column
+    @Column(nullable = false)
     private String state;
-    @Column
+    @Column(nullable = false)
     private String district;
-    @Column
+    @Column(nullable = false)
     private String street;
-    @Column
+    @Column(nullable = false)
     private String addressNumber;
-    @Column
     private String complement;
     private Boolean mainAddress;
     @ManyToOne(fetch = FetchType.LAZY)

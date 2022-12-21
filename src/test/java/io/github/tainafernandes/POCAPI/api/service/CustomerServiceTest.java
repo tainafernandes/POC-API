@@ -14,6 +14,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
+import org.modelmapper.ModelMapper;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Page;
@@ -34,9 +35,11 @@ public class CustomerServiceTest { //Only unit tests
     @MockBean
     CustomerRepository repository;
 
+    ModelMapper mapper;
+
     @BeforeEach //annotation causes method to be executed before each test
     public void setUp(){
-        this.service = new CustomerServiceImpl(repository);
+        this.service = new CustomerServiceImpl(repository, mapper);
     }
 
     private Customer createCustomer(){

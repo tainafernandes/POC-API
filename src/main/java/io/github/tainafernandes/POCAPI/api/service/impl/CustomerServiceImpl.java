@@ -1,10 +1,11 @@
 package io.github.tainafernandes.POCAPI.api.service.impl;
 
-import io.github.tainafernandes.POCAPI.api.DTO.CustomerDTO;
+import io.github.tainafernandes.POCAPI.api.DTO.request.CustomerRequestDto;
 import io.github.tainafernandes.POCAPI.api.entities.Customer;
 import io.github.tainafernandes.POCAPI.api.exception.BusinessException;
 import io.github.tainafernandes.POCAPI.api.repository.CustomerRepository;
 import io.github.tainafernandes.POCAPI.api.service.CustomerService;
+import jakarta.transaction.Transactional;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -22,11 +23,12 @@ public class CustomerServiceImpl implements CustomerService {
     private final ModelMapper mapper;
 
     @Override
-    public Customer save(CustomerDTO customerDTO){
-        if(repository.existsByDocument(customerDTO.getDocument())){
+    @Transactional
+    public Customer save(CustomerRequestDto customerRequestDto){
+        if(repository.existsByDocument(customerRequestDto.getDocument())){
             throw new BusinessException("Document already registered");
         }
-        return repository.save(mapper.map(customerDTO, Customer.class));
+        return repository.save(mapper.map(customerRequestDto, Customer.class));
     }
 
     @Override

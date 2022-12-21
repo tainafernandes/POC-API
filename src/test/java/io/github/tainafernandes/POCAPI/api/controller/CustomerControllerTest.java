@@ -6,7 +6,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.github.tainafernandes.POCAPI.api.DTO.CustomerDTO;
+import io.github.tainafernandes.POCAPI.api.DTO.request.CustomerRequestDto;
 import io.github.tainafernandes.POCAPI.api.entities.Customer;
 import io.github.tainafernandes.POCAPI.api.enums.documentType;
 import io.github.tainafernandes.POCAPI.api.exception.BusinessException;
@@ -45,8 +45,8 @@ public class CustomerControllerTest {
     @MockBean //specialized to create mocked instance
     CustomerServiceImpl service;
 
-    private CustomerDTO createNewCustomer(){
-        return CustomerDTO.builder().name("Josefa").email("josefa@email.com")
+    private CustomerRequestDto createNewCustomer(){
+        return CustomerRequestDto.builder().name("Josefa").email("josefa@email.com")
                 .document("12345678900").documentType(documentType.PF).phoneNumber("11999999999")
                 .build();
     }
@@ -54,7 +54,7 @@ public class CustomerControllerTest {
     @DisplayName("Must successfully create a customer")
     public void createCustomerTest() throws Exception{
         //cenário
-        CustomerDTO dto = createNewCustomer();
+        CustomerRequestDto dto = createNewCustomer();
         Customer savedCustomer = Customer.builder().id(1L).name("Josefa").email("josefa@email.com")
                 .document("12345678900").documentType(documentType.PF).phoneNumber("11999999999")
                 .build();
@@ -85,7 +85,7 @@ public class CustomerControllerTest {
     @DisplayName("It should throw an error when there is not all the data to create a customer")
     public void createInvalidCustomerTest() throws Exception { //integrity validation
 
-        String json = new ObjectMapper().writeValueAsString(new CustomerDTO());
+        String json = new ObjectMapper().writeValueAsString(new CustomerRequestDto());
 
         MockHttpServletRequestBuilder request = MockMvcRequestBuilders
                 .post(CUSTOMER_API)
@@ -102,7 +102,7 @@ public class CustomerControllerTest {
     @DisplayName("There should be an error when registering a document that already exists")
     public void createCustomerWithDuplicatedDocument() throws Exception{ //validação Regra de Negócio
 
-        CustomerDTO dto = createNewCustomer();
+        CustomerRequestDto dto = createNewCustomer();
         String json = new ObjectMapper().writeValueAsString(dto);
         String msgError = "Document already registered";
         BDDMockito.given(service.save(Mockito.any(Customer.class)))

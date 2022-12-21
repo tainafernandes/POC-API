@@ -1,8 +1,7 @@
 package io.github.tainafernandes.POCAPI.api.integrations;
 
 import com.google.gson.Gson;
-import io.github.tainafernandes.POCAPI.api.DTO.AddressViaCepDTO;
-import io.github.tainafernandes.POCAPI.api.entities.Address;
+import io.github.tainafernandes.POCAPI.api.DTO.request.AddressViaCepDTO;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
