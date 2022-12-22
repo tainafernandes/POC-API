@@ -34,9 +34,25 @@ public class AddressServiceImpl implements AddressService {
 
     @Override
     @Transactional
-    public Address save(AddressViaCepDTO addressViaCepDTO) throws Exception {
-        //Consumo da API Externa
+    public Address save(AddressViaCepDTO addressViaCepDTO, Integer maxAddress) throws Exception {
+        final var address = enrichmentAddress(addressViaCepDTO);
+
+        Customer customer = customerRepository.findById(address.getCustomerId()).orElseThrow();
+        if (repository.existsByStreetAndAddressNumber(address.getStreet(), address.getAddressNumber())) {
+            throw new BusinessException("Address already registered");
+        }
+
+        address.setMainAddress(customer.getAddresses().isEmpty());
+
+        if (customer.getAddresses().size() > maxAddress) {
+            throw new AddressException("You have reached the maximum amount of 5 registered addresses");
+        }
+        return repository.save(mapper.map(address, Address.class));
+    }
+
+    private AddressResponseDto enrichmentAddress(AddressViaCepDTO addressViaCepDTO) throws Exception {
         AddressViaCepDTO viaCepDTO = viaCep.getCepDTO(addressViaCepDTO.getCep());
+
         AddressResponseDto address = new AddressResponseDto();
         address.setZipCode(addressViaCepDTO.getCep());
         address.setState(viaCepDTO.getUf());
@@ -48,21 +64,7 @@ public class AddressServiceImpl implements AddressService {
         address.setMainAddress(addressViaCepDTO.getMainAddress());
         address.setComplement(addressViaCepDTO.getComplemento());
 
-        //Fim consumo
-
-        Customer customer = customerRepository.findById(address.getCustomerId()).orElseThrow();
-        if (repository.existsByStreetAndAddressNumber(address.getStreet(), address.getAddressNumber())) {
-            throw new BusinessException("Address already registered");
-        }
-        if (customer.getAddresses().isEmpty()) {
-            address.setMainAddress(true);
-        } else {
-            address.setMainAddress(false);
-        }
-        if (customer.getAddresses().size() > 5) {
-            throw new AddressException("You have reached the maximum amount of 5 registered addresses");
-        }
-        return repository.save(mapper.map(address, Address.class));
+        return address;
     }
 
     @Override
@@ -82,7 +84,7 @@ public class AddressServiceImpl implements AddressService {
     @Override
     @Transactional
     public Address update(Long id, AddressRequestDto addressRequestDto) {
-        if(addressRequestDto == null) {
+        if (addressRequestDto == null) {
             throw new IllegalArgumentException("Address id cant be null");
         }
 
@@ -94,7 +96,7 @@ public class AddressServiceImpl implements AddressService {
         address.setAddressNumber(addressRequestDto.getAddressNumber());
         address.setComplement(addressRequestDto.getComplement());
 
-        if(Boolean.TRUE.equals(addressRequestDto.getMainAddress())){
+        if (Boolean.TRUE.equals(addressRequestDto.getMainAddress())){
             address.getCustomer().getAddresses()
                     .stream().forEach(addr -> addr.setMainAddress(false)); //garantindo que todos os outros address são false
             address.setMainAddress(true);

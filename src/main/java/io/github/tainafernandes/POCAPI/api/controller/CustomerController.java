@@ -82,6 +82,16 @@ public class CustomerController {
         return new PageImpl<CustomerRequestDto>(list, pageRequest, result.getTotalElements());
     }
 
+//    @GetMapping("/v2")
+//    public Page<CustomerRequestDto> findV2(CustomerRequestDto dto, Pageable pageRequest){
+//        Customer filter = mapper.map(dto, Customer.class);
+//        Page<Customer> result = service.find(filter, pageRequest); //Here it returns a Customer page, but I have to return a CustomerDto page
+//        List<CustomerRequestDto> list = result.getContent().stream()
+//                .map(entity -> mapper.map(entity, CustomerRequestDto.class))
+//                .collect(Collectors.toList());
+//        return new PageImpl<CustomerRequestDto>(list, pageRequest, result.getTotalElements());
+//    }
+
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)

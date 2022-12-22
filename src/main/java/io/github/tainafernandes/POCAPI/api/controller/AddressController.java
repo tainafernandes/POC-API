@@ -40,9 +40,16 @@ public class AddressController {
     @ResponseStatus(HttpStatus.CREATED)
     public AddressResponseDto create(@RequestBody @Valid AddressViaCepDTO dto) throws Exception {
        // AddressViaCepDTO entity = mapper.map(dto, AddressViaCepDTO.class);
-        final Address save = service.save(dto);
+        final Address save = service.save(dto, 5);
         return mapper.map(save, AddressResponseDto.class);
     }
+
+//    @PostMapping("/v2") //Adicionando versionamento
+//    @ResponseStatus(HttpStatus.CREATED)
+//    public AddressResponseDto createV2(@RequestBody @Valid AddressViaCepDTO dto) throws Exception {
+//        final Address save = service.save(dto, 6);
+//        return mapper.map(save, AddressResponseDto.class);
+//    }
 
     @GetMapping("{id}")
     @ResponseStatus(HttpStatus.OK)
