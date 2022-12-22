@@ -10,9 +10,8 @@ import org.springframework.data.domain.Pageable;
 
 public interface AddressService {
 
-
     @Transactional
-    Address save(AddressViaCepDTO addressViaCepDTO, Integer maxAddress) throws Exception;
+    Address save(AddressViaCepDTO addressViaCepDTO) throws Exception;
 
     Address getById(Long id);
 

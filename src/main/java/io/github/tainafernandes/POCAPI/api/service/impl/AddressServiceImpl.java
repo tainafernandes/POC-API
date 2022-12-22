@@ -34,7 +34,7 @@ public class AddressServiceImpl implements AddressService {
 
     @Override
     @Transactional
-    public Address save(AddressViaCepDTO addressViaCepDTO, Integer maxAddress) throws Exception {
+    public Address save(AddressViaCepDTO addressViaCepDTO) throws Exception {
         final var address = enrichmentAddress(addressViaCepDTO);
 
         Customer customer = customerRepository.findById(address.getCustomerId()).orElseThrow();
@@ -44,7 +44,7 @@ public class AddressServiceImpl implements AddressService {
 
         address.setMainAddress(customer.getAddresses().isEmpty());
 
-        if (customer.getAddresses().size() > maxAddress) {
+        if (customer.getAddresses().size() > 5) {
             throw new AddressException("You have reached the maximum amount of 5 registered addresses");
         }
         return repository.save(mapper.map(address, Address.class));
