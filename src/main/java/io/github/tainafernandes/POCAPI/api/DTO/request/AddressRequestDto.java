@@ -13,22 +13,21 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class AddressRequestDto {
-    @NotBlank
+    @NotBlank(message = "State cannot be blank")
     private String state;
-    @NotBlank
+    @NotBlank(message = "City cannot be blank")
     private String city;
-    @NotBlank
+    @NotBlank(message = "District cannot be blank")
     private String district;
-    @NotBlank
+    @NotBlank(message = "Street cannot be blank")
     private String street;
-    @NotBlank
+    @NotBlank(message = "AddressNumber cannot be blank")
     private String addressNumber;
-    @NotBlank
+
     private String complement;
-    @NotBlank
+    @NotBlank(message = "Zipcode cannot be blank")
     private String zipCode;
     private Boolean mainAddress;
-
     private Long customerId;
 
     @Version

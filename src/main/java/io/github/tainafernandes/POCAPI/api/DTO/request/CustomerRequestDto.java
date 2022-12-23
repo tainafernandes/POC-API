@@ -29,19 +29,19 @@ import org.hibernate.validator.group.GroupSequenceProvider;
 public class CustomerRequestDto {
 
     private Long id;
-    @NotBlank
+    @NotBlank(message = "Name is a required field")
     private String name;
     @Email(message = "Invalid email")
-    @NotBlank
+    @NotBlank(message = "Email is a required field")
     private String email;
     @CPF(groups = CpfGroup.class)
     @CNPJ(groups = CnpjGroup.class)
     @NotBlank(message = "CPF/CNPJ is required")
     private String document;
-    @NotNull
+    @NotNull(message = "DocumentType cannot be null")
     @Enumerated(EnumType.STRING)
     private documentType documentType;
-    @NotBlank
+    @NotBlank(message = "PhoneNumber is a required field")
     private String phoneNumber;
 
     @Version
