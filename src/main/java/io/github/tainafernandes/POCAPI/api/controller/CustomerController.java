@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -41,6 +42,7 @@ public class CustomerController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
+    @CacheEvict(value = "addressCreate")
     public CustomerDtoResponse create(@RequestBody @Valid CustomerRequestDto dto){
         return mapper.map(service.save(dto), CustomerDtoResponse.class);
     }
@@ -54,11 +56,13 @@ public class CustomerController {
 
     @DeleteMapping("{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
+    @CacheEvict(value = "addressDelete")
     public void delete(@PathVariable Long id){
         Customer customer = service.getById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
         service.delete(customer);
     }
     @PutMapping("{id}")
+    @CacheEvict(value = "addressUpdate")
     public CustomerRequestDto update(@PathVariable Long id, @RequestBody @Valid CustomerRequestDto dto){
         return  service.getById(id).map(customer -> {
             customer.setName(dto.getName());

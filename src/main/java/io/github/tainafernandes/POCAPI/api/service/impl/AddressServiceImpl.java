@@ -1,8 +1,8 @@
 package io.github.tainafernandes.POCAPI.api.service.impl;
 
 import io.github.tainafernandes.POCAPI.api.DTO.request.AddressRequestDto;
-import io.github.tainafernandes.POCAPI.api.DTO.response.AddressResponseDto;
 import io.github.tainafernandes.POCAPI.api.DTO.request.AddressViaCepDTO;
+import io.github.tainafernandes.POCAPI.api.DTO.response.AddressResponseDto;
 import io.github.tainafernandes.POCAPI.api.entities.Address;
 import io.github.tainafernandes.POCAPI.api.entities.Customer;
 import io.github.tainafernandes.POCAPI.api.exception.AddressException;
@@ -14,9 +14,6 @@ import io.github.tainafernandes.POCAPI.api.service.AddressService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
-import org.springframework.cache.annotation.CacheConfig;
-import org.springframework.cache.annotation.CachePut;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.data.domain.Page;
