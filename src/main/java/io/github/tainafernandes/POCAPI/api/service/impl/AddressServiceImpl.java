@@ -14,6 +14,9 @@ import io.github.tainafernandes.POCAPI.api.service.AddressService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.cache.annotation.CacheConfig;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.data.domain.Page;
@@ -69,7 +72,7 @@ public class AddressServiceImpl implements AddressService {
 
     @Override
     public Address getById(Long id) {
-        return repository.findById(id).orElseThrow(() -> new AddressException("Id não encontrado"));
+        return repository.findById(id).orElseThrow(() -> new AddressException("Id not found"));
     }
 
     @Override

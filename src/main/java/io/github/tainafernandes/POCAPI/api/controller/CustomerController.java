@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -73,6 +74,7 @@ public class CustomerController {
     }
 
     @GetMapping
+    @Cacheable("addressFind")
     public Page<CustomerRequestDto> find(CustomerRequestDto dto, Pageable pageRequest){
         Customer filter = mapper.map(dto, Customer.class);
         Page<Customer> result = service.find(filter, pageRequest); //Here it returns a Customer page, but I have to return a CustomerDto page

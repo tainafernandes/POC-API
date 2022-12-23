@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -40,7 +41,7 @@ public class AddressController {
     @ResponseStatus(HttpStatus.CREATED)
     public AddressResponseDto create(@RequestBody @Valid AddressViaCepDTO dto) throws Exception {
        // AddressViaCepDTO entity = mapper.map(dto, AddressViaCepDTO.class);
-        final Address save = service.save(dto, 5);
+        final Address save = service.save(dto);
         return mapper.map(save, AddressResponseDto.class);
     }
 
@@ -52,8 +53,9 @@ public class AddressController {
 //    }
 
     @GetMapping("{id}")
+    @Cacheable("cacheGet")
     @ResponseStatus(HttpStatus.OK)
-    public AddressResponseDto get(@PathVariable Long id){
+    public AddressResponseDto get(@PathVariable Long id) {
         return mapper.map(service.getById(id), AddressResponseDto.class);
     }
 
@@ -71,6 +73,7 @@ public class AddressController {
     }
 
     @GetMapping
+    @Cacheable("addressFind")
     @ResponseStatus(HttpStatus.OK)
     public Page<AddressResponseDto> find(AddressResponseDto dto, Pageable pageRequest){
         Address filter = mapper.map(dto, Address.class);
