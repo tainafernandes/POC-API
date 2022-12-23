@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -39,6 +40,7 @@ public class AddressController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
+    @CacheEvict(value = "addressCreate")
     public AddressResponseDto create(@RequestBody @Valid AddressViaCepDTO dto) throws Exception {
        // AddressViaCepDTO entity = mapper.map(dto, AddressViaCepDTO.class);
         final Address save = service.save(dto);
@@ -53,7 +55,7 @@ public class AddressController {
 //    }
 
     @GetMapping("{id}")
-    @Cacheable("cacheGet")
+    @Cacheable("addressGet")
     @ResponseStatus(HttpStatus.OK)
     public AddressResponseDto get(@PathVariable Long id) {
         return mapper.map(service.getById(id), AddressResponseDto.class);
@@ -61,6 +63,7 @@ public class AddressController {
 
     @DeleteMapping("{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
+    @CacheEvict(value = "addressDelete")
     public void delete(@PathVariable Long id){
         Address address = service.getById(id);
         service.delete(address);
@@ -68,6 +71,7 @@ public class AddressController {
 
     @PutMapping("{id}")
     @ResponseStatus(HttpStatus.OK)
+    @CacheEvict(value = "addressUpdate")
     public AddressResponseDto update(@PathVariable Long id, @RequestBody @Valid AddressRequestDto dto){
         return mapper.map(service.update(id, dto), AddressResponseDto.class);
     }

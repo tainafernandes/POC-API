@@ -42,11 +42,12 @@ public class CustomerController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    @CacheEvict(value = "addressCreate")
+    @CacheEvict(value = "customerCreate")
     public CustomerDtoResponse create(@RequestBody @Valid CustomerRequestDto dto){
         return mapper.map(service.save(dto), CustomerDtoResponse.class);
     }
     @GetMapping("{id}")
+    @Cacheable("customerGet")
     @ResponseStatus(HttpStatus.OK)
     public CustomerRequestDto get(@PathVariable Long id){
         return service.getById(id)
@@ -56,13 +57,13 @@ public class CustomerController {
 
     @DeleteMapping("{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @CacheEvict(value = "addressDelete")
+    @CacheEvict(value = "customerDelete")
     public void delete(@PathVariable Long id){
         Customer customer = service.getById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
         service.delete(customer);
     }
     @PutMapping("{id}")
-    @CacheEvict(value = "addressUpdate")
+    @CacheEvict(value = "customerUpdate")
     public CustomerRequestDto update(@PathVariable Long id, @RequestBody @Valid CustomerRequestDto dto){
         return  service.getById(id).map(customer -> {
             customer.setName(dto.getName());
@@ -78,7 +79,7 @@ public class CustomerController {
     }
 
     @GetMapping
-    @Cacheable("addressFind")
+    @Cacheable("customerFind")
     public Page<CustomerRequestDto> find(CustomerRequestDto dto, Pageable pageRequest){
         Customer filter = mapper.map(dto, Customer.class);
         Page<Customer> result = service.find(filter, pageRequest); //Here it returns a Customer page, but I have to return a CustomerDto page
