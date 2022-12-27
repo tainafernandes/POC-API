@@ -10,6 +10,7 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.Version;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -38,8 +39,8 @@ public class CustomerRequestDto {
     @CNPJ(groups = CnpjGroup.class)
     @NotBlank(message = "CPF/CNPJ is required")
     private String document;
-    @NotNull(message = "DocumentType cannot be null")
     @Enumerated(EnumType.STRING)
+    @NotNull(message = "DocumentType cannot be null")
     private documentType documentType;
     @NotBlank(message = "PhoneNumber is a required field")
     private String phoneNumber;
