@@ -3,18 +3,13 @@ package io.github.tainafernandes.POCAPI.api.controller;
 import io.github.tainafernandes.POCAPI.api.DTO.request.CustomerRequestDto;
 import io.github.tainafernandes.POCAPI.api.DTO.response.CustomerDtoResponse;
 import io.github.tainafernandes.POCAPI.api.entities.Customer;
-import io.github.tainafernandes.POCAPI.api.exception.AddressException;
 import io.github.tainafernandes.POCAPI.api.exception.BusinessException;
-import io.github.tainafernandes.POCAPI.api.exception.CustomerException;
 import io.github.tainafernandes.POCAPI.api.exception.apiException.ApiErrors;
 import io.github.tainafernandes.POCAPI.api.service.impl.CustomerServiceImpl;
-import jakarta.persistence.Enumerated;
 import jakarta.validation.Valid;
-import java.util.Enumeration;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
-import org.apache.tomcat.util.bcel.classfile.EnumElementValue;
 import org.modelmapper.ModelMapper;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
@@ -42,7 +37,6 @@ import org.springframework.web.server.ResponseStatusException;
 public class CustomerController {
 
     private final CustomerServiceImpl service;
-
     private final ModelMapper mapper;
 
     @PostMapping
