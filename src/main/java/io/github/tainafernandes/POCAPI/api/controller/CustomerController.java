@@ -1,7 +1,7 @@
 package io.github.tainafernandes.POCAPI.api.controller;
 
 import io.github.tainafernandes.POCAPI.api.DTO.request.CustomerRequestDto;
-import io.github.tainafernandes.POCAPI.api.DTO.response.CustomerDtoResponse;
+import io.github.tainafernandes.POCAPI.api.DTO.response.CustomerResponseDto;
 import io.github.tainafernandes.POCAPI.api.entities.Customer;
 import io.github.tainafernandes.POCAPI.api.exception.BusinessException;
 import io.github.tainafernandes.POCAPI.api.exception.apiException.ApiErrors;
@@ -42,8 +42,8 @@ public class CustomerController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     @CacheEvict(value = "customerCreate")
-    public CustomerDtoResponse create(@RequestBody @Valid CustomerRequestDto dto){
-        return mapper.map(service.save(dto), CustomerDtoResponse.class);
+    public CustomerResponseDto create(@RequestBody @Valid CustomerRequestDto dto){
+        return mapper.map(service.save(dto), CustomerResponseDto.class);
     }
     @GetMapping("{id}")
     @Cacheable("customerGet")
