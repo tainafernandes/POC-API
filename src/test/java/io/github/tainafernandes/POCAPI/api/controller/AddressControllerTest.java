@@ -6,6 +6,7 @@ import static org.hamcrest.Matchers.hasSize;
 import static org.mockito.ArgumentMatchers.anyLong;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.github.tainafernandes.POCAPI.api.DTO.request.AddressViaCepDTO;
 import io.github.tainafernandes.POCAPI.api.DTO.response.AddressResponseDto;
 import io.github.tainafernandes.POCAPI.api.entities.Address;
 import io.github.tainafernandes.POCAPI.api.exception.BusinessException;
@@ -14,6 +15,7 @@ import io.github.tainafernandes.POCAPI.api.repository.AddressRepository;
 import io.github.tainafernandes.POCAPI.api.service.impl.AddressServiceImpl;
 import java.util.Arrays;
 import java.util.Optional;
+import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -44,52 +46,68 @@ public class AddressControllerTest {
     MockMvc mvc; //used for requests
     @MockBean
     AddressServiceImpl service;
-
+    @MockBean
     private AddressRepository addressRepository;
 
-//    private AddressResponseDto createNewAddress(){
-//        return AddressResponseDto.builder().zipCode("18741-011")
-//                .state(StateAbbreviations.SP).city("Santo André")
-//                .neighborhood("Vila Luzita").street("Estrada do Pedroso")
-//                .addressNumber("52").complement("Casa 1").mainAddress(true)
-//                .mainAddress(true).build();
-//    }
-//    //preciso informar o Id do customer que quero cadastrar o endereço
-//
-//    @Test
-//    @DisplayName("Must successfully create a address")
-//    public void createAddressTest() throws Exception{
-//        //scenery
-//        AddressResponseDto dto = createNewAddress();
-//        Address saveAddress = Address.builder().id(1L).zipCode("18741-011")
-//                .state(StateAbbreviations.SP).city("Santo André")
-//                .neighborhood("Vila Luzita").street("Estrada do Pedroso")
-//                .addressNumber("52").complement("Casa 1").mainAddress(true)
-//                .build();
-//
-//        BDDMockito.given(service.save(Mockito.any(AddressResponseDto.class))).willReturn(saveAddress);
-//
-//        String json = new ObjectMapper().writeValueAsString(dto);
-//
-//        MockHttpServletRequestBuilder request = MockMvcRequestBuilders
-//                .post(ADDRESS_API)
-//                .contentType(MediaType.APPLICATION_JSON)
-//                .accept(MediaType.APPLICATION_JSON)
-//                .content(json);
-//
-//        mvc.perform(request)
-//                .andExpect(status().isCreated())
-//                .andExpect(jsonPath("id").value(1L))
-//                .andExpect(jsonPath("zipCode").value(dto.getZipCode()))
-//                .andExpect(jsonPath("state").value(dto.getState().toString()))
-//                .andExpect(jsonPath("city").value(dto.getCity()))
-//                .andExpect(jsonPath("neighborhood").value(dto.getNeighborhood()))
-//                .andExpect(jsonPath("street").value(dto.getStreet()))
-//                .andExpect(jsonPath("addressNumber").value(dto.getAddressNumber()))
-//                .andExpect(jsonPath("complement").value(dto.getComplement()))
-//                .andExpect(jsonPath("mainAddress").value(dto.getMainAddress()));
-//    }
-//
+    private AddressViaCepDTO createViaCepDTO(){
+        return AddressViaCepDTO.builder().cep("09132-530")
+                .logradouro("Rua Éden").addressNumber("25")
+                .complemento("casa 1").bairro("Jardim Santo André")
+                .localidade("Santo André").uf("SP").mainAddress(true)
+                .build();
+    }
+    private AddressResponseDto createAddress(){
+        return AddressResponseDto.builder().state("SP").city("Santo André")
+                .district("Jardim Santo André").street("Rua Éden")
+                .addressNumber("25").complement("casa 1")
+                .zipCode("09132-530").mainAddress(true).customerId(1L)
+                .build();
+    }
+    //preciso informar o Id do customer que quero cadastrar o endereço
+
+    @Test
+    @DisplayName("Must successfully create a address")
+    public void createAddressTest() throws Exception{
+        //scenery
+        AddressViaCepDTO dto = createViaCepDTO();
+        Address save = Address.builder()
+                .id(1L)
+                .state("SP")
+                .city("Santo André")
+                .district("Jardim Santo André")
+                .street("Rua Éden")
+                .addressNumber("25")
+                .complement("casa 1")
+                .zipCode("09132-530")
+                .mainAddress(true)
+                .build();
+
+        //given: espero alguma informação. Ex: dado tal coisa, me retorne isso
+
+        BDDMockito.given(service.save(Mockito.any(AddressViaCepDTO.class)))
+                .willReturn(save);
+
+        String json = new ObjectMapper().writeValueAsString(dto);
+
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders
+                .post(ADDRESS_API)
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
+                .content(json);
+
+        mvc.perform(request)
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("id").value(1L))
+                .andExpect(jsonPath("zipCode").value(dto.getCep()))
+                .andExpect(jsonPath("street").value(dto.getLogradouro()))
+                .andExpect(jsonPath("addressNumber").value(dto.getAddressNumber()))
+                .andExpect(jsonPath("complement").value(dto.getComplemento()))
+                .andExpect(jsonPath("district").value(dto.getBairro()))
+                .andExpect(jsonPath("city").value(dto.getLocalidade()))
+                .andExpect(jsonPath("state").value(dto.getUf()))
+                .andExpect(jsonPath("mainAddress").value(dto.getMainAddress()));
+    }
+
 //    @Test
 //    @DisplayName("Should throw an error when there is not all the data to create an address")
 //    public void createInvalidAddressTest() throws Exception{
