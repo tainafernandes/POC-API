@@ -4,6 +4,7 @@ import io.github.tainafernandes.POCAPI.api.DTO.request.AddressRequestDto;
 import io.github.tainafernandes.POCAPI.api.DTO.response.AddressResponseDto;
 import io.github.tainafernandes.POCAPI.api.DTO.request.AddressViaCepDTO;
 import io.github.tainafernandes.POCAPI.api.entities.Address;
+import io.github.tainafernandes.POCAPI.api.exception.AddressException;
 import io.github.tainafernandes.POCAPI.api.exception.BusinessException;
 import io.github.tainafernandes.POCAPI.api.exception.apiException.ApiErrors;
 import io.github.tainafernandes.POCAPI.api.service.impl.AddressServiceImpl;
@@ -100,6 +101,12 @@ public class AddressController {
     @ExceptionHandler(BusinessException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ApiErrors handleBusinessException(BusinessException ex){
+        return new ApiErrors(ex);
+    }
+
+    @ExceptionHandler(AddressException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ApiErrors handleAddressException(AddressException ex){
         return new ApiErrors(ex);
     }
 }

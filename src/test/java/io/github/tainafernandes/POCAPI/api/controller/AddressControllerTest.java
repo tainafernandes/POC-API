@@ -1,14 +1,18 @@
 package io.github.tainafernandes.POCAPI.api.controller;
 
+import static org.hamcrest.Matchers.empty;
+import static org.mockito.ArgumentMatchers.isNull;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.hamcrest.Matchers.hasSize;
 import static org.mockito.ArgumentMatchers.anyLong;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.github.tainafernandes.POCAPI.api.DTO.request.AddressRequestDto;
 import io.github.tainafernandes.POCAPI.api.DTO.request.AddressViaCepDTO;
 import io.github.tainafernandes.POCAPI.api.DTO.response.AddressResponseDto;
 import io.github.tainafernandes.POCAPI.api.entities.Address;
+import io.github.tainafernandes.POCAPI.api.exception.AddressException;
 import io.github.tainafernandes.POCAPI.api.exception.BusinessException;
 import io.github.tainafernandes.POCAPI.api.repository.AddressRepository;
 ;
@@ -108,93 +112,115 @@ public class AddressControllerTest {
                 .andExpect(jsonPath("mainAddress").value(dto.getMainAddress()));
     }
 
-//    @Test
-//    @DisplayName("Should throw an error when there is not all the data to create an address")
-//    public void createInvalidAddressTest() throws Exception{
-//
-//        String json = new ObjectMapper().writeValueAsString(new AddressResponseDto());
-//
-//        MockHttpServletRequestBuilder request = MockMvcRequestBuilders
-//                .post(ADDRESS_API)
-//                .contentType(MediaType.APPLICATION_JSON)
-//                .accept(MediaType.APPLICATION_JSON)
-//                .content(json);
-//
-//        mvc.perform(request)
-//                .andExpect(status().isBadRequest())
-//                .andExpect(jsonPath("errors", hasSize(8)));
-//    }
-//
-//    @Test
-//    @DisplayName("It should return an error trying to register an address with street and repeated number")
-//    public void createAddressWithDuplicatedAddressAndAddressNumber() throws Exception{
-//
-//        AddressResponseDto dto = createNewAddress();
-//        String json = new ObjectMapper().writeValueAsString(dto);
-//        String msgError = "There is already a registered address with the same street and number";
-//        BDDMockito.given(service.save(Mockito.any(AddressResponseDto.class)))
-//                .willThrow(new BusinessException(msgError));
-//
-//        MockHttpServletRequestBuilder request = MockMvcRequestBuilders
-//                .post(ADDRESS_API)
-//                .contentType(MediaType.APPLICATION_JSON)
-//                .accept(MediaType.APPLICATION_JSON)
-//                .content(json);
-//
-//        mvc.perform(request)
-//                .andExpect(status().isBadRequest())
-//                .andExpect(jsonPath("errors", hasSize(1)))
-//                .andExpect(jsonPath("errors[0]").value(msgError));
-//    }
-//
-//    @Test
-//    @DisplayName("Must get Address information")
-//    public void getAddressDetailsTest() throws Exception{
-//        Long id = 1L;
-//
-//        Address address = Address.builder().id(id)
-//                .zipCode(createNewAddress().getZipCode())
-//                .state(createNewAddress().getState())
-//                .city(createNewAddress().getCity())
-//                .neighborhood(createNewAddress().getNeighborhood())
-//                .street(createNewAddress().getStreet())
-//                .addressNumber(createNewAddress().getAddressNumber())
-//                .complement(createNewAddress().getComplement())
-//                .mainAddress(createNewAddress().getMainAddress())
-//                .build();
-//        BDDMockito.given(service.getById(id)).willReturn(Optional.of(address));
-//
-//        MockHttpServletRequestBuilder request = MockMvcRequestBuilders
-//                .get(ADDRESS_API.concat("/"+id))
-//                .accept(MediaType.APPLICATION_JSON);
-//
-//        mvc.perform(request)
-//                .andExpect(status().isOk())
-//                .andExpect(jsonPath("id").value(id))
-//                .andExpect(jsonPath("zipCode").value(createNewAddress().getZipCode()))
-//                .andExpect(jsonPath("state").value(createNewAddress().getState().toString()))
-//                .andExpect(jsonPath("city").value(createNewAddress().getCity()))
-//                .andExpect(jsonPath("neighborhood").value(createNewAddress().getNeighborhood()))
-//                .andExpect(jsonPath("street").value(createNewAddress().getStreet()))
-//                .andExpect(jsonPath("addressNumber").value(createNewAddress().getAddressNumber()))
-//                .andExpect(jsonPath("complement").value(createNewAddress().getComplement()))
-//                .andExpect(jsonPath("mainAddress").value(createNewAddress().getMainAddress()));
-//    }
-//
-//    @Test
-//    @DisplayName("Should return resource not found when sought address does not exist")
-//    public void addressNotFoundTest() throws Exception {
-//
-//        BDDMockito.given(service.getById(anyLong())).willReturn(Optional.empty());
-//
-//        MockHttpServletRequestBuilder request = MockMvcRequestBuilders
-//                .get(ADDRESS_API.concat("/"+1))
-//                .accept(MediaType.APPLICATION_JSON);
-//
-//        mvc.perform(request)
-//                .andExpect(status().isNotFound());
-//    }
-//
+    @Test
+    @DisplayName("Should throw an error when there is not all the data to create an address")
+    public void createInvalidAddressTest() throws Exception{
+
+        String json = new ObjectMapper().writeValueAsString(new AddressResponseDto());
+
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders
+                .post(ADDRESS_API)
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
+                .content(json);
+
+        mvc.perform(request)
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("errors", hasSize(2)));
+    }
+
+    @Test
+    @DisplayName("An error should be returned when trying to register an address with a blank zipCode")
+    public void createAddressWithBlankZipCode() throws Exception{
+
+        AddressViaCepDTO dto = createViaCepDTO();
+        String json = new ObjectMapper().writeValueAsString(dto);
+        String msgError = "zipCode is a required field";
+        BDDMockito.given(service.save(Mockito.any(AddressViaCepDTO.class)))
+                .willThrow(new BusinessException(msgError));
+
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders
+                .post(ADDRESS_API)
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
+                .content(json);
+
+        mvc.perform(request)
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("errors", hasSize(1)))
+                .andExpect(jsonPath("errors[0]").value(msgError));
+    }
+
+    @Test
+    @DisplayName("An error should be returned when trying to register an address with a blank addressNumber")
+    public void createAddressWithBlankAddressNumber() throws Exception{
+
+        AddressViaCepDTO dto = createViaCepDTO();
+        String json = new ObjectMapper().writeValueAsString(dto);
+        String msgError = "addressNumber is a required field";
+        BDDMockito.given(service.save(Mockito.any(AddressViaCepDTO.class)))
+                .willThrow(new BusinessException(msgError));
+
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders
+                .post(ADDRESS_API)
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
+                .content(json);
+
+        mvc.perform(request)
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("errors", hasSize(1)))
+                .andExpect(jsonPath("errors[0]").value(msgError));
+    }
+
+    @Test
+    @DisplayName("Must get Address information")
+    public void getAddressDetailsTest() throws Exception{
+        Long id = 1L;
+
+        Address address = Address.builder().id(id)
+                .zipCode(createAddress().getZipCode())
+                .state(createAddress().getState())
+                .city(createAddress().getCity())
+                .district(createAddress().getDistrict())
+                .street(createAddress().getStreet())
+                .addressNumber(createAddress().getAddressNumber())
+                .complement(createAddress().getComplement())
+                .mainAddress(createAddress().getMainAddress())
+                .build();
+        BDDMockito.given(service.getById(id)).willReturn(address);
+
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders
+                .get(ADDRESS_API.concat("/"+id))
+                .accept(MediaType.APPLICATION_JSON);
+
+        mvc.perform(request)
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("id").value(id))
+                .andExpect(jsonPath("zipCode").value(createAddress().getZipCode()))
+                .andExpect(jsonPath("state").value(createAddress().getState()))
+                .andExpect(jsonPath("city").value(createAddress().getCity()))
+                .andExpect(jsonPath("district").value(createAddress().getDistrict()))
+                .andExpect(jsonPath("street").value(createAddress().getStreet()))
+                .andExpect(jsonPath("addressNumber").value(createAddress().getAddressNumber()))
+                .andExpect(jsonPath("complement").value(createAddress().getComplement()))
+                .andExpect(jsonPath("mainAddress").value(createAddress().getMainAddress()));
+    }
+
+    @Test
+    @DisplayName("Should return 404 when sought address does not exist")
+    public void addressNotFoundTest() throws Exception {
+
+        BDDMockito.given(service.getById(anyLong())).willThrow(new AddressException("Id not found"));
+
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders
+                .get(ADDRESS_API.concat("/" + 1))
+                .accept(MediaType.APPLICATION_JSON);
+
+        mvc.perform(request)
+                .andExpect(status().isNotFound());
+    }
+
 //    @Test
 //    @DisplayName("Must delete a Address")
 //    public void deleteAddressTest() throws Exception{

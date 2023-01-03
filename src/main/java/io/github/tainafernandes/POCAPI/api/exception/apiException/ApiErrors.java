@@ -1,5 +1,6 @@
 package io.github.tainafernandes.POCAPI.api.exception.apiException;
 
+import io.github.tainafernandes.POCAPI.api.exception.AddressException;
 import io.github.tainafernandes.POCAPI.api.exception.BusinessException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -15,6 +16,10 @@ public class ApiErrors {
     }
 
     public ApiErrors(BusinessException ex){
+        this.errors = Arrays.asList(ex.getMessage());
+    }
+
+    public ApiErrors(AddressException ex){
         this.errors = Arrays.asList(ex.getMessage());
     }
 
