@@ -1,11 +1,9 @@
 package io.github.tainafernandes.POCAPI.api.controller;
 
-import static org.hamcrest.Matchers.empty;
-import static org.mockito.ArgumentMatchers.isNull;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.hamcrest.Matchers.hasSize;
 import static org.mockito.ArgumentMatchers.anyLong;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.github.tainafernandes.POCAPI.api.DTO.request.AddressRequestDto;
@@ -15,19 +13,14 @@ import io.github.tainafernandes.POCAPI.api.entities.Address;
 import io.github.tainafernandes.POCAPI.api.exception.AddressException;
 import io.github.tainafernandes.POCAPI.api.exception.BusinessException;
 import io.github.tainafernandes.POCAPI.api.repository.AddressRepository;
-;
 import io.github.tainafernandes.POCAPI.api.service.impl.AddressServiceImpl;
-import java.util.Arrays;
 import java.util.Optional;
-import org.modelmapper.ModelMapper;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.BDDMockito;
 import org.mockito.Mockito;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -38,6 +31,8 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+
+;
 
 @WebMvcTest(controllers = AddressController.class)
 @ExtendWith(SpringExtension.class)
@@ -52,6 +47,8 @@ public class AddressControllerTest {
     AddressServiceImpl service;
     @MockBean
     private AddressRepository addressRepository;
+    @MockBean
+    ModelMapper mapper;
 
     private AddressViaCepDTO createViaCepDTO(){
         return AddressViaCepDTO.builder().cep("09132-530")
@@ -60,11 +57,19 @@ public class AddressControllerTest {
                 .localidade("Santo André").uf("SP").mainAddress(true)
                 .build();
     }
-    private AddressResponseDto createAddress(){
-        return AddressResponseDto.builder().state("SP").city("Santo André")
+    private AddressResponseDto createResponseAddressDto(){
+        return AddressResponseDto.builder().id(1L).state("SP").city("Santo André")
                 .district("Jardim Santo André").street("Rua Éden")
                 .addressNumber("25").complement("casa 1")
                 .zipCode("09132-530").mainAddress(true).customerId(1L)
+                .build();
+    }
+
+    private AddressRequestDto createRequestAddressDto(){
+        return AddressRequestDto.builder().state("SP").city("Jundiaí")
+                .district("Jardim Estádio").street("Rua Sorocaba")
+                .addressNumber("43").complement("casa 1")
+                .zipCode("13203-603").mainAddress(true).customerId(1L)
                 .build();
     }
     //preciso informar o Id do customer que quero cadastrar o endereço
@@ -179,14 +184,14 @@ public class AddressControllerTest {
         Long id = 1L;
 
         Address address = Address.builder().id(id)
-                .zipCode(createAddress().getZipCode())
-                .state(createAddress().getState())
-                .city(createAddress().getCity())
-                .district(createAddress().getDistrict())
-                .street(createAddress().getStreet())
-                .addressNumber(createAddress().getAddressNumber())
-                .complement(createAddress().getComplement())
-                .mainAddress(createAddress().getMainAddress())
+                .zipCode(createResponseAddressDto().getZipCode())
+                .state(createResponseAddressDto().getState())
+                .city(createResponseAddressDto().getCity())
+                .district(createResponseAddressDto().getDistrict())
+                .street(createResponseAddressDto().getStreet())
+                .addressNumber(createResponseAddressDto().getAddressNumber())
+                .complement(createResponseAddressDto().getComplement())
+                .mainAddress(createResponseAddressDto().getMainAddress())
                 .build();
         BDDMockito.given(service.getById(id)).willReturn(address);
 
@@ -197,14 +202,14 @@ public class AddressControllerTest {
         mvc.perform(request)
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("id").value(id))
-                .andExpect(jsonPath("zipCode").value(createAddress().getZipCode()))
-                .andExpect(jsonPath("state").value(createAddress().getState()))
-                .andExpect(jsonPath("city").value(createAddress().getCity()))
-                .andExpect(jsonPath("district").value(createAddress().getDistrict()))
-                .andExpect(jsonPath("street").value(createAddress().getStreet()))
-                .andExpect(jsonPath("addressNumber").value(createAddress().getAddressNumber()))
-                .andExpect(jsonPath("complement").value(createAddress().getComplement()))
-                .andExpect(jsonPath("mainAddress").value(createAddress().getMainAddress()));
+                .andExpect(jsonPath("zipCode").value(createResponseAddressDto().getZipCode()))
+                .andExpect(jsonPath("state").value(createResponseAddressDto().getState()))
+                .andExpect(jsonPath("city").value(createResponseAddressDto().getCity()))
+                .andExpect(jsonPath("district").value(createResponseAddressDto().getDistrict()))
+                .andExpect(jsonPath("street").value(createResponseAddressDto().getStreet()))
+                .andExpect(jsonPath("addressNumber").value(createResponseAddressDto().getAddressNumber()))
+                .andExpect(jsonPath("complement").value(createResponseAddressDto().getComplement()))
+                .andExpect(jsonPath("mainAddress").value(createResponseAddressDto().getMainAddress()));
     }
 
     @Test
@@ -221,74 +226,79 @@ public class AddressControllerTest {
                 .andExpect(status().isNotFound());
     }
 
-//    @Test
-//    @DisplayName("Must delete a Address")
-//    public void deleteAddressTest() throws Exception{
-//
-//        BDDMockito.given(service.getById(anyLong())).willReturn(Optional.of(Address.builder().id(1l).build()));
-//
-//        MockHttpServletRequestBuilder request = MockMvcRequestBuilders
-//                .delete(ADDRESS_API.concat("/"+1));
-//
-//        mvc.perform(request)
-//                .andExpect(status().isNoContent());
-//    }
-//
-//    @Test
-//    @DisplayName("Should return resource not found when not finding address to delete")
-//    public void deleteInexistentAddressTest() throws Exception{
-//
-//        BDDMockito.given(service.getById(anyLong())).willReturn(Optional.empty());
-//
-//        MockHttpServletRequestBuilder request = MockMvcRequestBuilders
-//                .delete(ADDRESS_API.concat("/"+1));
-//
-//        mvc.perform(request)
-//                .andExpect(status().isNotFound());
-//    }
-//
-//    @Test
-//    @DisplayName("Must update a address")
-//    public void updateAddressTest() throws Exception {
-//        Long id = 1L;
-//        String json = new ObjectMapper().writeValueAsString(createNewAddress());
-//
-//        Address updatingAddress = Address.builder().id(1L).zipCode("18741-013").state(StateAbbreviations.SP)
-//                .city("São Caetano").neighborhood("Barcelona").street("Estrada do Pedroso")
-//                .addressNumber("721").complement("Casa 1").mainAddress(true).build();
-//        BDDMockito.given(service.getById(id))
-//                .willReturn(Optional.of(updatingAddress));
-//
-//        Address updatedAddress = Address.builder().id(id).zipCode("18741-011")
-//                .state(StateAbbreviations.SP).city("Santo André")
-//                .neighborhood("Vila Luzita").street("Estrada do Pedroso")
-//                .addressNumber("52").complement("Casa 1").mainAddress(true)
-//                .build();
-//        BDDMockito.given(service.update(updatingAddress)).willReturn(updatedAddress);
-//
-//        MockHttpServletRequestBuilder request = MockMvcRequestBuilders
-//                .put(ADDRESS_API.concat("/"+1))
-//                .contentType(MediaType.APPLICATION_JSON)
-//                .accept(MediaType.APPLICATION_JSON)
-//                .content(json);
-//
-//        mvc.perform(request)
-//                .andExpect(status().isOk())
-//                .andExpect(jsonPath("id").value(id))
-//                .andExpect(jsonPath("zipCode").value(createNewAddress().getZipCode()))
-//                .andExpect(jsonPath("state").value(createNewAddress().getState().toString()))
-//                .andExpect(jsonPath("city").value(createNewAddress().getCity()))
-//                .andExpect(jsonPath("neighborhood").value(createNewAddress().getNeighborhood()))
-//                .andExpect(jsonPath("street").value(createNewAddress().getStreet()))
-//                .andExpect(jsonPath("addressNumber").value(createNewAddress().getAddressNumber()))
-//                .andExpect(jsonPath("complement").value(createNewAddress().getComplement()))
-//                .andExpect(jsonPath("mainAddress").value(createNewAddress().getMainAddress()));
-//    }
-//
+    @Test
+    @DisplayName("Must delete a Address")
+    public void deleteAddressTest() throws Exception{
+
+        Address address = Address.builder().id(1L).build();
+
+        BDDMockito.given(service.getById(anyLong())).willReturn(address);
+
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders
+                .delete(ADDRESS_API.concat("/"+1));
+
+        mvc.perform(request)
+                .andExpect(status().isNoContent());
+    }
+
+    @Test
+    @DisplayName("Should return resource not found when not finding address to delete")
+    public void deleteInexistentAddressTest() throws Exception{
+
+        BDDMockito.given(service.getById(anyLong())).willThrow(new AddressException("Inexistent Address"));
+
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders
+                .delete(ADDRESS_API.concat("/"+1));
+
+        mvc.perform(request)
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    @DisplayName("Must update a address")
+    public void updateAddressTest() throws Exception {
+        Long id = 1L;
+
+        AddressRequestDto dto = createRequestAddressDto();
+        String json = new ObjectMapper().writeValueAsString(dto);
+
+        Address updatedAddress = Address.builder().id(id).zipCode("09132-530").state("SP")
+                .city("Santo André").district("Jardim Santo André").street("Rua Éden")
+                .addressNumber("25").complement("Casa 1").mainAddress(true).build();
+
+        AddressResponseDto responseDto = createResponseAddressDto();
+
+            BDDMockito.given(service.update(id, dto)).willReturn(updatedAddress);
+            BDDMockito.given(mapper.map(updatedAddress, AddressResponseDto.class)).willReturn(responseDto);
+
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders
+                .put(ADDRESS_API.concat("/" + id))
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
+                .content(json);
+
+
+        mvc.perform(request)
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("id").value(responseDto.getId()))
+                .andExpect(jsonPath("zipCode").value(responseDto.getZipCode()))
+                .andExpect(jsonPath("state").value(responseDto.getState()))
+                .andExpect(jsonPath("city").value(responseDto.getCity()))
+                .andExpect(jsonPath("district").value(responseDto.getDistrict()))
+                .andExpect(jsonPath("street").value(responseDto.getStreet()))
+                .andExpect(jsonPath("addressNumber").value(responseDto.getAddressNumber()))
+                .andExpect(jsonPath("complement").value(responseDto.getComplement()))
+                .andExpect(jsonPath("customerId").value(responseDto.getCustomerId()))
+                .andExpect(jsonPath("mainAddress").value(responseDto.getMainAddress()));
+
+    }
+
 //    @Test
 //    @DisplayName("Should return 404 when trying to update a non-existent address")
 //    public void updateInexistentAddressTest() throws Exception{
+//
 //        String json = new ObjectMapper().writeValueAsString(createNewAddress());
+//        createRequestAddressDto().setId(3L);
 //
 //        BDDMockito.given(service.getById(Mockito.anyLong())).willReturn(Optional.empty());
 //
@@ -301,7 +311,7 @@ public class AddressControllerTest {
 //        mvc.perform(request)
 //                .andExpect(status().isNotFound());
 //    }
-//
+
 //    @Test
 //    @DisplayName("Must filter address")
 //    public void findAddressTest() throws Exception{

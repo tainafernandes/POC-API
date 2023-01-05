@@ -5,14 +5,16 @@ import jakarta.persistence.Version;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
+@Builder
 @Getter @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class AddressRequestDto {
+    private Long id;
     @NotBlank(message = "State cannot be blank")
     private String state;
     @NotBlank(message = "City cannot be blank")
@@ -23,7 +25,6 @@ public class AddressRequestDto {
     private String street;
     @NotBlank(message = "AddressNumber cannot be blank")
     private String addressNumber;
-
     private String complement;
     @NotBlank(message = "Zipcode cannot be blank")
     private String zipCode;

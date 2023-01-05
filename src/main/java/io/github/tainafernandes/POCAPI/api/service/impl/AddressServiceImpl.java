@@ -85,7 +85,7 @@ public class AddressServiceImpl implements AddressService {
     @Transactional
     public Address update(Long id, AddressRequestDto addressRequestDto) {
         if (addressRequestDto == null) {
-            throw new IllegalArgumentException("Address id cant be null");
+            throw new AddressException("Address id cant be null");
         }
 
         Address address = getById(id);
